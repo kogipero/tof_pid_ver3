@@ -1,0 +1,181 @@
+# Analysis Configuration
+analysis:
+  directory_name: 'eicrecon_ver1_24_2_NCDIS'
+  analysis_event_type: 'OFFICIAL_NCDIS_PYTHIA_epic_VER25_4_1_eicrecon_ver1_24_2'
+  selected_events: 10000
+  verbose: true
+  plot_verbose: true
+  detail_plot_verbose: false
+  version: '1.24.2'
+
+# Vertex Cuts
+vertex_cuts:
+  x:
+    min: 20
+    max: 30
+  y:
+    min: 20
+    max: 30
+  z:
+    min: 20
+    max: 30
+
+# File Paths
+file_paths:
+  NCDIS:
+    path: '/home/onok/2025/2025-5/eic/install-v1.24/reco_pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1_N10000.root'
+    description: 'NCDIS events created with Pythia'
+    number_of_events: 10000
+    version: '1.24.2'
+    production_method: 'Using Pythia'
+  single_particle_pion:
+    path: '/home/onok/eic/create_events/recon_out/pi/Rec_single_particle_pion_N1000000_100m_5g_20241214.root'
+    description: 'Single particle pion events'
+    number_of_events: 1000000
+    version: '24.12.0'
+    production_method: 'Single particle'
+  # Add other file paths as needed
+
+# Branch Names
+branches:
+  mc:
+    mc_branch:
+      - 'MCParticles.PDG'
+      - 'MCParticles.generatorStatus'
+      - 'MCParticles.charge'
+      - 'MCParticles.momentum.x'
+      - 'MCParticles.momentum.y'
+      - 'MCParticles.momentum.z'
+      - 'MCParticles.vertex.x'
+      - 'MCParticles.vertex.y'
+      - 'MCParticles.vertex.z'
+      - 'MCParticles.momentumAtEndpoint.x'
+      - 'MCParticles.momentumAtEndpoint.y'
+      - 'MCParticles.momentumAtEndpoint.z'
+      - 'MCParticles.spin.x'
+      - 'MCParticles.spin.y'
+      - 'MCParticles.spin.z'
+      - 'MCParticles.colorFlow.a'
+      - 'MCParticles.colorFlow.b'
+      - 'MCParticles.parents_begin'
+      - 'MCParticles.parents_end'
+      - 'MCParticles.daughters_begin'
+      - 'MCParticles.daughters_end'
+      - 'MCParticles.endpoint.x'
+      - 'MCParticles.endpoint.y'
+      - 'MCParticles.endpoint.z'
+      - 'MCParticles.time'
+      - 'MCParticles.mass'
+
+  track:
+    segments_branch:
+      - 'CentralTrackSegments.length'
+      - 'CentralTrackSegments.lengthError'
+      - 'CentralTrackSegments.points_begin'
+      - 'CentralTrackSegments.points_end'
+      - '_CentralTrackSegments_track.index'
+      - '_CentralTrackSegments_track.collectionID'
+    points_branch:
+      - '_CentralTrackSegments_points.position.x'
+      - '_CentralTrackSegments_points.position.y'
+      - '_CentralTrackSegments_points.position.z'
+      - '_CentralTrackSegments_points.momentum.x'
+      - '_CentralTrackSegments_points.momentum.y'
+      - '_CentralTrackSegments_points.momentum.z'
+      - '_CentralTrackSegments_points.pathlength'
+      - '_CentralTrackSegments_points.pathlengthError'
+      - '_CentralTrackSegments_points.surface'
+      - '_CentralTrackSegments_points.system'
+      - '_CentralTrackSegments_points.positionError.xx'
+      - '_CentralTrackSegments_points.positionError.yy'
+      - '_CentralTrackSegments_points.positionError.zz'
+      - '_CentralTrackSegments_points.positionError.xy'
+      - '_CentralTrackSegments_points.positionError.xz'
+      - '_CentralTrackSegments_points.positionError.yz'
+      - '_CentralTrackSegments_points.momentumError.xx'
+      - '_CentralTrackSegments_points.momentumError.yy'
+      - '_CentralTrackSegments_points.momentumError.zz'
+      - '_CentralTrackSegments_points.momentumError.xy'
+      - '_CentralTrackSegments_points.momentumError.xz'
+      - '_CentralTrackSegments_points.momentumError.yz'
+      - '_CentralTrackSegments_points.time'
+      - '_CentralTrackSegments_points.timeError'
+      - '_CentralTrackSegments_points.theta'
+      - '_CentralTrackSegments_points.phi'
+      - '_CentralTrackSegments_points.directionError.xx'
+      - '_CentralTrackSegments_points.directionError.yy'
+      - '_CentralTrackSegments_points.directionError.xy'
+    vertices_branch:
+      - '_CentralTrackVertices_associatedParticles.index'
+      - '_CentralTrackVertices_associatedParticles.collectionID'
+
+  tof:
+    barrel:
+      rec_hits_branch:
+        - 'TOFBarrelRecHits.time'
+        - 'TOFBarrelRecHits.position.x'
+        - 'TOFBarrelRecHits.position.y'
+        - 'TOFBarrelRecHits.position.z'
+        - 'TOFBarrelRecHits.positionError.xx'
+        - 'TOFBarrelRecHits.positionError.yy'
+        - 'TOFBarrelRecHits.positionError.zz'
+        - 'TOFBarrelRecHits.cellID'
+        - 'TOFBarrelRecHits.timeError'
+        - 'TOFBarrelRecHits.edep'
+        - 'TOFBarrelRecHits.edepError'
+      raw_hits_branch:
+        - 'TOFBarrelHits.time'
+        - 'TOFBarrelHits.position.x'
+        - 'TOFBarrelHits.position.y'
+        - 'TOFBarrelHits.position.z'
+        - 'TOFBarrelHits.momentum.x'
+        - 'TOFBarrelHits.momentum.y'
+        - 'TOFBarrelHits.momentum.z'
+        - 'TOFBarrelHits.cellID'
+        - 'TOFBarrelHits.EDep'
+        - 'TOFBarrelHits.pathLength'
+        - 'TOFBarrelHits.quality'
+      hit_associations_branch:
+        - '_TOFBarreHitAssociations_rawHit.index'
+        - '_TOFBarreHitAssociations_rawHit.collectionID'
+      mc_associations_branch:
+        - '_TOFBarrelHits_MCParticle.index'
+        - '_TOFBarrelHits_MCParticle.collectionID'
+      mc_associations_ver1_24_2_branch:
+        - '_TOFBarrelHits_particle.index'
+    endcap:
+      rec_hits_branch:
+        - 'TOFEndcapRecHits.time'
+        - 'TOFEndcapRecHits.position.x'
+        - 'TOFEndcapRecHits.position.y'
+        - 'TOFEndcapRecHits.position.z'
+        - 'TOFEndcapRecHits.positionError.xx'
+        - 'TOFEndcapRecHits.positionError.yy'
+        - 'TOFEndcapRecHits.positionError.zz'
+        - 'TOFEndcapRecHits.cellID'
+        - 'TOFEndcapRecHits.timeError'
+        - 'TOFEndcapRecHits.edep'
+        - 'TOFEndcapRecHits.edepError'
+      raw_hits_branch:
+        - 'TOFEndcapHits.time'
+        - 'TOFEndcapHits.position.x'
+        - 'TOFEndcapHits.position.y'
+        - 'TOFEndcapHits.position.z'
+        - 'TOFEndcapHits.momentum.x'
+        - 'TOFEndcapHits.momentum.y'
+        - 'TOFEndcapHits.momentum.z'
+        - 'TOFEndcapHits.cellID'
+        - 'TOFEndcapHits.EDep'
+        - 'TOFEndcapHits.pathLength'
+        - 'TOFEndcapHits.quality'
+      hit_associations_branch:
+        - '_TOFEndcapHitAssociatedPoints.index'
+        - '_TOFEndcapHitAssociatedPoints.collectionID'
+      mc_associations_branch:
+        - '_TOFEndcapHits_MCParticle.index'
+        - '_TOFEndcapHits_MCParticle.collectionID'
+      mc_associations_ver1_24_2_branch:
+        - '_TOFEndcapHits_particle.index'
+    
+    # Add other barrel TOF branches as needed
+    # Add other endcap TOF branches as needed 

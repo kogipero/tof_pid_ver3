@@ -16,79 +16,99 @@ class TOFPIDPerformancePlotter:
         self.rootfile = rootfile
         self.name = name
     
-    def plot_pid_performance(self, data: dict, area: str = '') -> None:
-        """
-        Plot PID performance evaluation results.
-        
-        Args:
-            data: Dictionary containing PID performance data
-            area: Area identifier (e.g., 'btof', 'etof')
-        """
-        print(f'Start plotting PID performance for {area}')
-        
-        # Plot time distributions for different particle types
-        for particle_type in data['particle_types']:
-            time_data = data[f'time_{particle_type}']
-            myfunc.make_histogram_root(
-                time_data,
-                100,
-                hist_range=[0, 100],
-                title=f'Time distribution for {particle_type}',
-                xlabel='Time [ns]',
-                ylabel='Entries',
-                outputname=f'{self.name}/time_{particle_type}',
-                rootfile=self.rootfile
+    def plot_pid_performance(self, data: dict, area: str = "") -> None:
+
+        pdg_map = {
+            "pi": (211, -211),
+            "k": (321, -321),
+            "p": (2212, -2212),
+        }
+
+        pdg  = data.get("pdg", None)
+        # ------------------------------------------------------------
+        # β⁻¹ vs p   
+        # ------------------------------------------------------------
+        if "beta_inverse" in data and "momentum" in data:
+            myfunc.make_2Dhistogram_root(
+                data["momentum"],            
+                data["beta_inverse"],         
+                100, [0.0, 5.0],              
+                100, [0.8, 1.8],              
+                title     = "beta inverse vs p",    
+                xlabel    = "p [GeV/c]",      
+                ylabel    = "beta inverse",         
+                outputname= f"beta_inv_vs_p_{area}",   
+                rootfile  = self.rootfile
             )
-        
-        # Plot momentum distributions
-        myfunc.make_histogram_root(
-            data['momentum'],
-            100,
-            hist_range=[0, 20],
-            title='Momentum distribution',
-            xlabel='Momentum [GeV/c]',
-            ylabel='Entries',
-            outputname=f'{self.name}/momentum',
-            rootfile=self.rootfile
-        )
-        
-        # Plot separation power
-        if 'separation_power' in data:
+
+        # ------------------------------------------------------------
+        # reconstructed mass 
+        # ------------------------------------------------------------
+        if "calc_mass" in data:
             myfunc.make_histogram_root(
-                data['separation_power'],
-                100,
-                hist_range=[0, 10],
-                title='Separation power',
-                xlabel='Separation power',
-                ylabel='Entries',
-                outputname=f'{self.name}/separation_power',
-                rootfile=self.rootfile
+                data["calc_mass"], 120, [0, 1200],
+                f"Reconstructed_Mass_{area};Mass [MeV];Entries",
+                f"mass_hist_{area}", rootfile=self.rootfile
             )
-        
-        # Plot efficiency and purity
-        if 'efficiency' in data and 'purity' in data:
-            momentum_bins = np.linspace(0, 20, 21)
-            efficiency = data['efficiency']
-            purity = data['purity']
-            
-            # Create efficiency graph
-            eff_graph = r.TGraph(len(momentum_bins)-1)
-            for i in range(len(momentum_bins)-1):
-                eff_graph.SetPoint(i, (momentum_bins[i] + momentum_bins[i+1])/2, efficiency[i])
-            
-            eff_graph.SetTitle('Efficiency vs Momentum')
-            eff_graph.GetXaxis().SetTitle('Momentum [GeV/c]')
-            eff_graph.GetYaxis().SetTitle('Efficiency')
-            eff_graph.Write(f'{self.name}/efficiency')
-            
-            # Create purity graph
-            pur_graph = r.TGraph(len(momentum_bins)-1)
-            for i in range(len(momentum_bins)-1):
-                pur_graph.SetPoint(i, (momentum_bins[i] + momentum_bins[i+1])/2, purity[i])
-            
-            pur_graph.SetTitle('Purity vs Momentum')
-            pur_graph.GetXaxis().SetTitle('Momentum [GeV/c]')
-            pur_graph.GetYaxis().SetTitle('Purity')
-            pur_graph.Write(f'{self.name}/purity')
-        
-        print(f'End plotting PID performance for {area}') 
+
+        # ------------------------------------------------------------
+        # momentum and β⁻¹
+        # ------------------------------------------------------------
+        if "momentum" in data:
+            myfunc.make_histogram_root(
+                data["momentum"], 100, [0, 3.5],
+                f"Momentum_{area}; p [GeV/c];Entries",
+                f"p_hist_{area}", rootfile=self.rootfile
+            )
+        if "beta_inverse" in data:
+            myfunc.make_histogram_root(
+                data["beta_inverse"], 100, [0, 1.8],
+                f"beta inverse_{area}; beta inverse;Entries",
+                f"beta_inv_hist_{area}", rootfile=self.rootfile
+            )
+
+        # ------------------------------------------------------------
+        # pid each particle
+        # ------------------------------------------------------------
+
+        if len(pdg):
+            for tag, pdgs in pdg_map.items():
+                mask = np.isin(pdg, pdgs)
+
+                # mass
+                if mask.any():
+                    myfunc.make_histogram_root(
+                        data["calc_mass"][mask], 120, [0, 1200],
+                        f"{tag.upper()} Mass ({area});Mass [MeV];Entries",
+                        f"mass_{tag}_{area}", rootfile=self.rootfile
+                    )
+                    # β^-1 vs p
+                    myfunc.make_2Dhistogram_root(
+                        data["momentum"][mask],
+                        data["beta_inverse"][mask],
+                        100, [0.0, 3.5], 100, [0.8, 1.8],
+                        title     = f"β^{{-1}} vs p ({tag})",
+                        xlabel    = "p [GeV/c]",
+                        ylabel    = "β^{-1}",
+                        outputname= f"beta_inv_vs_p_{tag}_{area}",
+                        rootfile  = self.rootfile
+                    )
+
+    def plot_purity_vs_momentum(
+        self, bins,
+        pi_norm, pi_err_norm, pi_uniq, pi_err_uniq,
+        k_norm, k_err_norm, k_uniq, k_err_uniq,
+        p_norm, p_err_norm, p_uniq, p_err_uniq,
+    ):
+        g_pi   = r.TGraphErrors(len(bins), bins, pi_norm, np.zeros_like(bins), pi_err_norm)
+        g_pi.SetTitle("π purity; Momentum [GeV]; Purity")
+
+        g_k    = r.TGraphErrors(len(bins), bins, k_norm, np.zeros_like(bins), k_err_norm)
+        g_p    = r.TGraphErrors(len(bins), bins, p_norm, np.zeros_like(bins), p_err_norm)
+
+        c = r.TCanvas(f"c_purity_{self.tag}", " ", 800, 600)
+        g_pi.SetMarkerStyle(20); g_pi.Draw("AP")
+        g_k.SetMarkerStyle(21); g_k.SetMarkerColor(r.kRed);   g_k.Draw("P SAME")
+        g_p.SetMarkerStyle(22); g_p.SetMarkerColor(r.kBlue);  g_p.Draw("P SAME")
+        c.BuildLegend()
+        if self.rootfile: c.Write()

@@ -50,5 +50,3 @@ class MCPlotter:
                 outputname=f'{self.name}/{outputname}',
                 rootfile=self.rootfile
             )
-        
-        print('End plotting MC particle information') 

@@ -7,6 +7,7 @@ from typing import Tuple, Dict
 from utility_function import angular_distance
 from matching_tof_and_track_plotter import MatchingTOFAndTrackPlotter
 from tof_analyzer import TOFHitInfo
+from tqdm.auto import tqdm
 
 @dataclass
 class MatchedTrackInfo:
@@ -57,11 +58,13 @@ class MatchingTOFAndTrack:
         Parameters
         ----------
         track_segments_on_btof_df : pd.DataFrame
-            TrackAnalyzer.get_track_segments_on_tof_info() で得られる BTOF 上のセグメント DataFrame
+            dataframe containing track segments points on barrel TOF
         filtered_stable_btof_hit_info : pd.DataFrame
-            MatchingMCAndTOF.isReconstructedHit() 後の barrel stable ヒット DataFrame
+            dataframe containing filtered stable barrel TOF hit particles information
         track_segments_on_etof_df : pd.DataFrame
+            dataframe containing track segments points on endcap TOF
         filtered_stable_etof_hit_info : pd.DataFrame
+            dataframe containing filtered stable endcap TOF hit particles information
         """
         btrk = track_segments_on_btof_df
         bhit = filtered_stable_btof_hit_info
@@ -80,7 +83,7 @@ class MatchingTOFAndTrack:
             'track_pathlength': [], 'delta_angle': [],
         }
 
-        for i, row in btrk.iterrows():
+        for i, row in tqdm(btrk.iterrows(), total=len(btrk), desc='btof tof and track matching'):
             event_idx = row['event']
             tx, ty, tz = row['track_x'], row['track_y'], row['track_z']
             track_phi   = np.arctan2(ty, tx)
@@ -128,7 +131,7 @@ class MatchingTOFAndTrack:
         btof_and_track_matched_df.to_csv(f'./out/{self.name}/btof_and_track_matched.csv', index=False)
 
         etof_matched = {k: [] for k in btof_matched}
-        for i, row in etrk.iterrows():
+        for i, row in tqdm(etrk.iterrows(), total=len(etrk), desc='etof tof and track matching'):
             event_idx = row['event']
             tx, ty, tz = row['track_x'], row['track_y'], row['track_z']
             track_phi   = np.arctan2(ty, tx)

@@ -1,5 +1,3 @@
-# Plotting support function
-
 import matplotlib.pyplot as plt
 import mplhep as hep
 import numpy as np
@@ -169,9 +167,9 @@ def make_2Dhistogram(
 # draw ROOT plots
 def make_2Dhistogram_root(
         arrayx, 
+        arrayy, 
         nbinsx, 
         rangex, 
-        arrayy, 
         nbinsy, 
         rangey, 
         title='', 

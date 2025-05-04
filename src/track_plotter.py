@@ -23,7 +23,6 @@ class TrackPlotter:
             data: Dictionary containing track segment data
             area: Area identifier (e.g., 'btof', 'etof')
         """
-        print(f'Start plotting track segments for {area}')
         
         plot_configs = [
             (data['x'], [-1000, 1000], 'x [mm]', 'track_x'),
@@ -51,7 +50,6 @@ class TrackPlotter:
                 rootfile=self.rootfile
             )
         
-        print(f'End plotting track segments for {area}') 
 
     def plot_track_segments_on_tof(self, data: dict, area: str = '') -> None:
         """
@@ -61,7 +59,6 @@ class TrackPlotter:
             data: Dictionary containing track segment data
             area: Area identifier (e.g., 'btof', 'etof')
         """
-        print(f'Start plotting track segments on TOF for {area}')
         
         plot_configs = [
             (data['track_x'], [-1000, 1000], f'track_x_on_{area} [mm]', f'track_x_on_{area}'),
@@ -85,4 +82,3 @@ class TrackPlotter:
                 rootfile=self.rootfile
             )
         
-        print(f'End plotting track segments on TOF for {area}')

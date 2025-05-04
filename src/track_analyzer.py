@@ -9,6 +9,9 @@ from typing import Tuple, List, Dict, Any, Optional
 import helper_functions as myfunc
 from track_plotter import TrackPlotter
 
+# this analyzer is getting track segments from the ROOT file
+# and splitting them into individual tracks
+
 @dataclass
 class TrackSegmentInfo:
     """Data class to store track segment information."""

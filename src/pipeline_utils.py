@@ -58,7 +58,7 @@ def process_events(selected_events: int,
 
     # --- 5) TOF ↔︎ Track matching ----------------------------------------
     print("process_events : start TOF ↔︎ Track matching")
-    match_tof_trk.matching_tof_and_track(
+    matched_tof_and_track_btof, matched_tof_and_track_etof = match_tof_trk.matching_tof_and_track(
         track_segments_on_btof_df = tracks_on_btof,
         filtered_stable_btof_hit_info = matched_btof.df,
         track_segments_on_etof_df = tracks_on_etof,
@@ -68,8 +68,15 @@ def process_events(selected_events: int,
 
     # --- 6) PID performance -------------------------------------
     print("process_events : start PID performance analysis")
-    perf_manager.process_pid_performance_plot(
-        btof_and_track_matched_pd = matched_btof,
+    _,_,_,_ = perf_manager.process_pid_performance_plot(
+        tof_and_track_matched_pd = matched_tof_and_track_btof,
+        area="btof",
+        plot_verbose=True
+    )
+
+    _,_,_,_ = perf_manager.process_pid_performance_plot(
+        tof_and_track_matched_pd = matched_tof_and_track_etof,
+        area="etof",
         plot_verbose=True
     )
 

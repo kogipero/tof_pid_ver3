@@ -155,23 +155,7 @@ def analyzer(config: AnalysisConfig, output_file: str):
             tof_pid_performance
         ]
     )
-    
-    # Create plotters
-    mc_plotter = MCPlotter(rootfile, "mc_plots")
-    track_plotter = TrackPlotter(rootfile, "track_plots")
-    tof_plotter = TOFPlotter(rootfile, "tof_plots")
-    matching_mc_and_tof_plotter = MatchingMCAndTOFPlotter(rootfile, "matching_mc_and_tof_plots")
-    matching_tof_and_track_plotter = MatchingTOFAndTrackPlotter(rootfile, "matching_tof_and_track_plots")
-    tof_pid_performance_plotter = TOFPIDPerformancePlotter(rootfile, "tof_pid_performance_plots")
-    
-    # Plot results
-    mc_plotter.plot_mc_particles(mc_analyzer.get_results())
-    track_plotter.plot_tracks(track_analyzer.get_results())
-    tof_plotter.plot_tof_hits(tof_analyzer.get_results())
-    matching_mc_and_tof_plotter.plot_matched_hits(matching_mc_and_tof.get_results())
-    matching_tof_and_track_plotter.plot_matched_tracks(matching_tof_and_track.get_results())
-    tof_pid_performance_plotter.plot_pid_performance(tof_pid_performance.get_results())
-    
+        
     # Close output file
     rootfile.Close()
 

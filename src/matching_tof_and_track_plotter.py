@@ -22,9 +22,7 @@ class MatchingTOFAndTrackPlotter:
         Args:
             data: Dictionary containing matched track data
             area: Area identifier (e.g., 'btof', 'etof')
-        """
-        print(f'Start plotting matched tracks for {area}')
-        
+        """        
         plot_configs = [
             (data['track_pos_x'], [-10, 10], 'Track px [GeV/c]', 'track_px'),
             (data['track_pos_y'], [-10, 10], 'Track py [GeV/c]', 'track_py'),
@@ -56,5 +54,3 @@ class MatchingTOFAndTrackPlotter:
                 outputname=f'{self.name}/{outputname}',
                 rootfile=self.rootfile
             )
-        
-        print(f'End plotting matched tracks for {area}') 

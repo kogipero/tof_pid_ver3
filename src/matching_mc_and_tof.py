@@ -241,13 +241,13 @@ class MatchingMCAndTOF:
         Checks if a hit is reconstructed.
 
         Args:
-            b_stable_df: barrel TOF 上で stable と判定されたヒットの DataFrame
-            e_stable_df: endcap TOF 上で stable と判定されたヒットの DataFrame
-            plot_verbose: True のとき、フィルタ後にプロットも実行
+            b_stable_df: dataframe of stable barrel TOF hits 
+            e_stable_df: dataframe of stable endcap TOF hits 
+            plot_verbose: True to plot the matched hits
 
         Returns:
-            filtered_btof: barrel 再構成ヒットのみを残した DataFrame
-            filtered_etof: endcap 再構成ヒットのみを残した DataFrame
+            filtered_btof: dataframe of barrel TOF hits that are reconstructed
+            filtered_etof: dataframe of endcap TOF hits that are reconstructed
         """
 
         # ── barrel ──

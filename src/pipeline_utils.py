@@ -68,15 +68,42 @@ def process_events(selected_events: int,
 
     # --- 6) PID performance -------------------------------------
     print("process_events : start PID performance analysis")
-    _,_,_,_ = perf_manager.process_pid_performance_plot(
+    calc_mass_btof,pdg_btof,p_btof,pt_btof = perf_manager.process_pid_performance_plot(
         tof_and_track_matched_pd = matched_tof_and_track_btof,
         area="btof",
         plot_verbose=True
     )
 
-    _,_,_,_ = perf_manager.process_pid_performance_plot(
+    calc_mass_etof,pdg_etof,p_etof,pt_etof= perf_manager.process_pid_performance_plot(
         tof_and_track_matched_pd = matched_tof_and_track_etof,
         area="etof",
+        plot_verbose=True
+    )
+
+    perf_manager.process_separation_power_vs_momentum(
+        tof_calc_mass = calc_mass_btof,
+        tof_pdg       = pdg_btof,
+        track_momentums_on_tof         = p_btof,
+        track_momentums_transverse_on_tof        = pt_btof,
+        area = "btof",
+        plot_verbose=True
+    )
+
+    # perf_manager.process_separation_power_vs_momentum(
+    #     tof_calc_mass = calc_mass_etof,
+    #     tof_pdg       = pdg_etof,
+    #     track_momentums_on_tof         = p_etof,
+    #     track_momentums_transverse_on_tof        = pt_etof,
+    #     area = "etof",
+    #     plot_verbose=True
+    # )
+
+    perf_manager.process_purity_vs_momentum(
+        btof_calc_mass = calc_mass_btof,
+        btof_pdg       = pdg_btof,
+        track_momentums_on_btof         = p_btof,
+        track_momentums_transverse_on_btof        = pt_btof,
+        area = "btof",
         plot_verbose=True
     )
 

@@ -176,6 +176,3 @@ branches:
         - '_TOFEndcapHits_MCParticle.collectionID'
       mc_associations_ver1_24_2_branch:
         - '_TOFEndcapHits_particle.index'
-    
-    # Add other barrel TOF branches as needed
-    # Add other endcap TOF branches as needed 

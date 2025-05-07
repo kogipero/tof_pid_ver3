@@ -71,7 +71,7 @@ class MatchingTOFAndTrack:
         etrk = track_segments_on_etof_df
         ehit = filtered_stable_etof_hit_info
 
-        angle_threshold = 0.01  # rad
+        angle_threshold = 0.1  # rad
 
         btof_matched = {
             'event_idx': [], 'track_idx': [], 'track_p': [], 'track_pt': [],

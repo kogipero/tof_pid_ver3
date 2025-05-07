@@ -3,7 +3,9 @@
 ePIC Detector の Barrel TOF (Time Of Flight) 検出器を対象とした
 **PID（π/K/p 識別）性能評価スクリプト**です。
 
-MC(dd4hep) → 再構成シミュレーション（EICrecon） → 各種マッチング → PID 評価 
+```
+MC truth  →  EICrecon  →  TOF‑MC matching  →  TOF‑Track matching  →  PID metrics  →  ROOT / CSV
+```
 
 
 を想定しており、 本スクリプトでは、EICreconの出力ファイルに対し、各種マッチングを行い、PID評価の結果をROOT と CSV で保存します。

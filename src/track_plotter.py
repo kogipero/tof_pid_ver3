@@ -46,7 +46,7 @@ class TrackPlotter:
                 title=f'Track_segment_{outputname}_{area}',
                 xlabel=xlabel,
                 ylabel='Entries',
-                outputname=f'{self.name}/{outputname}',
+                outputname=f'{self.name}/{outputname}_{area}',
                 rootfile=self.rootfile
             )
         
@@ -78,7 +78,7 @@ class TrackPlotter:
                 title=f'Track_segment_on_TOF_{outputname}_{area}',
                 xlabel=xlabel,
                 ylabel='Entries',
-                outputname=f'{self.name}/{outputname}',
+                outputname=f'{self.name}/{outputname}_{area}',
                 rootfile=self.rootfile
             )
         

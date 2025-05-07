@@ -3,8 +3,10 @@
 ePIC Detector の Barrel TOF (Time Of Flight) 検出器を対象とした
 **PID（π/K/p 識別）性能評価スクリプト**です。
 
-MC(dd4hep) → 再構成シミュレーション（EICrecon） → 各種マッチング → PID 評価
-を想定しており、 再構成シミュレーションの出力ファイルに対し、各種マッチングを行い、PID評価の結果をROOT と CSV で保存します。
+MC(dd4hep) → 再構成シミュレーション（EICrecon） → 各種マッチング → PID 評価 
+
+
+を想定しており、 本スクリプトでは、EICreconの出力ファイルに対し、各種マッチングを行い、PID評価の結果をROOT と CSV で保存します。
 
 ---
 
@@ -24,18 +26,22 @@ MC(dd4hep) → 再構成シミュレーション（EICrecon） → 各種マッ�
   * 中間 CSV（TOF ↔ Track マッチング結果など）※必要に応じて削除してください
 
 ---
+## 解析の流れ
+
+---
 
 ## 動作確認済み環境
+何か漏れがありましたら教えてください
 
 | component | version | 備考           |
-| --------- | ------- | ------------ |
-| Python    | 3.10    | miniconda 推奨 |
-| ROOT      | 6.30/04 | PyROOT 有効    |
-| uproot    | 5.x     | 要確認         |
-| awkward   | 2.x     | 要確認         |
-| numpy     | 1.26+   | 要確認         |
-| pyyaml    | 6.x     | 要確認         |
-| tqdm      | 4.x     | 要確認         |
+| --------- | ------- | ------------  |
+| Python    | 3.10.9  | miniconda 推奨 |
+| ROOT      | 6.32.02 | PyROOT 有効    |
+| uproot    | 5.3.10  |               |
+| awkward   | 2.6.5   |               |
+| numpy     | 1.26.4  |               |
+| pyyaml    | 6.0.1   |               |
+| tqdm      | 4.66.4  |               |
 
 
 ## ディレクトリ構成
@@ -50,6 +56,9 @@ MC(dd4hep) → 再構成シミュレーション（EICrecon） → 各種マッ�
 │   ├── matching_mc_and_tof.py
 │   ├── matching_tof_and_track.py
 │   ├── tof_pid_performance_manager.py
+|   ├── pipline_utils.py
+|   ├── utility_function.py
+|   ├── 〇〇_plotter.py
 │   └── helper_functions.py
 ├── config/
 │   └── config.yaml（生成タイプによって作成推奨）
@@ -64,14 +73,14 @@ MC(dd4hep) → 再構成シミュレーション（EICrecon） → 各種マッ�
 ```yaml
 analysis:
   directory_name: eic_pid_test
-  analysis_event_type: NCDIS            # run_analysis.py の --filetype で上書き可
+  analysis_event_type: NCDIS     
   selected_events: 10000
-  verbose: true
-  plot_verbose: true
+  verbose: true　（一部動いていない、後で確認）
+  plot_verbose: true　（一部動いていない、後で確認）
   detail_plot_verbose: false
   version: "ver1_24_2"
 
-vertex_cuts:
+vertex_cuts:　（未実装：現在はハードコード）
   zvtx_min: -100.0     # [mm]
   zvtx_max:  100.0
 
@@ -114,20 +123,29 @@ python analyze_script.py \
   --filetype NCDIS
 ```
 
-* `--filetype` には YAML の `file_paths[*].description` を指定
+* `--filetype` には YAML の `file_paths` を指定
 * 生成物は `out/<directory_name>/` に保存されます
 
 ---
 
-## 出力 ROOT ファイルの例
+## 出力ファイルのTree
+
+**は物理量
 
 | オブジェクト名                | 内容                            |
 | ---------------------- | ----------------------------- |
-| `beta_inv_vs_p_btof`   | β<sup>−1</sup> vs p (BTOF 全体) |
-| `mass_pi_btof`         | π 再構成質量 (BTOF)                |
-| `beta_inv_vs_p_k_etof` | K β<sup>−1</sup> vs p (ETOF)  |
-| `trk_path`             | トラック区間 pathlength ヒスト         |
-| `c_purity_btof`        | π/K/p 純度 vs p (TCanvas)       |　（未実装）
+| `mc_**`                 | mcの全情報 |
+| `TOF_rec_hit_**_{btof/etof}`         | TOFの再構成ヒットの全情報                |
+| `Track_trk_**` | トラックポイントに関する全情報  |
+| `Track_segments_on_{btof/etof}_**`             | TOF上でのトラックポイントの情報（truth）         |
+| `{btof/etof}_raw_{hit/mc}_**`        | mcとTOFの情報を紐付けた情報       |　
+| `{btof/etof}_stable_{hit/mc}_**`             | mcとTOFの情報を紐付けた情報（安定粒子）         |
+| `{btof/etof}_reco_{hit/mc}_**`             | mcとTOFの情報を紐付けた情報（安定粒子かつ再構成に使われたヒットのみ）         |
+| `Matched_{track/tof/mc}_**`             | trackとmcとTOFヒットのマッチング後の情報         |
+| `beta_inverse_vs_p_{btof/etof}`             | PID performance (beta_inverse_vs_momentum)|
+| `Reconstructed_Mass_{btof/etof}`             | PID performance (再構成質量)         |
+| `beta_inverse_vs_p_{btof/etof}_(pi/k/p)`             | 各粒子毎のPID performance (beta_inverse_vs_momentum)         |
+| `Reconstructed_Mass_{btof/etof}_(pi/k/p)`             | 各粒子毎のPID performance (再構成質量)         |
 
 ---
 

@@ -130,3 +130,8 @@ python analyze_script.py \
 | `c_purity_btof`        | π/K/p 純度 vs p (TCanvas)       |　（未実装）
 
 ---
+
+## 今後のアップデート予定
+
+* 設定ファイルの変更
+* separation vs pt分布の実装

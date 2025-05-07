@@ -11,7 +11,7 @@ MC(dd4hep) → 再構成シミュレーション（EICrecon） → 各種マッ�
 ## 特長
 
 * **YAML 設定** で入力ファイル／TTreeの名前／カット条件の切り替えが可能
-* `uproot + awkward` を使い出力結果を操作
+* `uproot + awkward` を使い、EICreconの出力結果を操作
 * TGraph/TH2/TH1 でヒストグラムを生成
 
   * β<sup>−1</sup> vs p
@@ -109,7 +109,7 @@ branches:
 
 ```bash
 python analyze_script.py \
-  --config   config/example_NCDIS.yaml \
+  --config   config/config.yaml \
   --output   pid_result.root \
   --filetype NCDIS
 ```

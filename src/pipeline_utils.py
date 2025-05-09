@@ -89,6 +89,7 @@ def process_events(selected_events: int,
         plot_verbose=True
     )
 
+    # etof is invalid because it has not yet been analyzed
     # perf_manager.process_separation_power_vs_momentum(
     #     tof_calc_mass = calc_mass_etof,
     #     tof_pdg       = pdg_etof,

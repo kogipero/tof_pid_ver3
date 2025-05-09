@@ -34,7 +34,7 @@ class TOFPIDPerformancePlotter:
                 data["beta_inverse"],         
                 100, [0.0, 5.0],              
                 100, [0.8, 1.8],              
-                title     = "beta inverse vs p",    
+                title     = "beta_inverse_vs_p",    
                 xlabel    = "p [GeV/c]",      
                 ylabel    = "beta inverse",         
                 outputname= f"beta_inv_vs_p_{area}",   
@@ -70,7 +70,7 @@ class TOFPIDPerformancePlotter:
         if "momentum" in data and "mc_momentum" in data:
             data["momentum_reso"] = data["momentum"] - data["mc_momentum"]
             myfunc.make_histogram_root(
-                data["momentum_reso"], 100, [-0.5, 0.5],
+                data["momentum_reso"], 100, [-0.2, 0.2],
                 f"Momentum resolution_{area}; p [GeV/c];Entries",
                 f"p_reso_hist_{area}", rootfile=self.rootfile
             )
@@ -78,7 +78,7 @@ class TOFPIDPerformancePlotter:
         if "track_pos_phi" in data and "tof_pos_phi" in data:
             data["phi_reso"] = data["track_pos_phi"] - data["tof_pos_phi"]
             myfunc.make_histogram_root(
-                data["phi_reso"], 100, [-0.5, 0.5],
+                data["phi_reso"], 100, [-0.2, 0.2],
                 f"Phi resolution_{area}; Phi [rad];Entries",
                 f"phi_reso_hist_{area}", rootfile=self.rootfile
             )
@@ -86,7 +86,7 @@ class TOFPIDPerformancePlotter:
         if "track_pos_theta" in data and "tof_pos_theta" in data:
             data["theta_reso"] = data["track_pos_theta"] - data["tof_pos_theta"]
             myfunc.make_histogram_root(
-                data["theta_reso"], 100, [-0.5, 0.5],
+                data["theta_reso"], 100, [-0.2, 0.2],
                 f"Theta resolution_{area}; Theta [rad];Entries",
                 f"theta_reso_hist_{area}", rootfile=self.rootfile
             )
@@ -103,7 +103,7 @@ class TOFPIDPerformancePlotter:
                 if mask.any():
                     myfunc.make_histogram_root(
                         data["calc_mass"][mask], 120, [0, 1200],
-                        f"{tag.upper()} Mass ({area});Mass [MeV];Entries",
+                        f"{tag.upper()}_Mass_({area});Mass [MeV];Entries",
                         f"mass_{tag}_{area}", rootfile=self.rootfile
                     )
                     # β^-1 vs p
@@ -111,9 +111,9 @@ class TOFPIDPerformancePlotter:
                         data["momentum"][mask],
                         data["beta_inverse"][mask],
                         100, [0.0, 3.5], 100, [0.8, 1.8],
-                        title     = f"β^{{-1}} vs p ({tag})",
+                        title     = f"beta_inverse_vs_p_({tag})_{area}",
                         xlabel    = "p [GeV/c]",
-                        ylabel    = "β^{-1}",
+                        ylabel    = "beta inverse",
                         outputname= f"beta_inv_vs_p_{tag}_{area}",
                         rootfile  = self.rootfile
                     )
@@ -158,7 +158,7 @@ class TOFPIDPerformancePlotter:
         g_k_p.SetMarkerStyle(21)
         g_k_p.SetMarkerColor(r.kRed)
 
-        g_pi_k.SetTitle(f"Separation Power ({area}); p_T [GeV/c]; Separation Power")
+        g_pi_k.SetTitle(f"Separation Power ({area}); pT [GeV]; Separation Power")
 
         # ─── canvas & draw ──────────────────────────────────────
         c1 = r.TCanvas(f"c_sep_pi_k_{area}", " ", 800, 600)
@@ -217,10 +217,12 @@ class TOFPIDPerformancePlotter:
 
         c2 = r.TCanvas(f"c_purity_k_{area}", "", 800, 600)
         c2.SetGrid()
+        g_k.SetTitle(f"purity_k_{area};Momentum [GeV];Purity")
         g_k.Draw("AP")
 
         c3 = r.TCanvas(f"c_purity_p_{area}", "", 800, 600)
         c3.SetGrid()
+        g_p.SetTitle(f"purity_p_{area};Momentum [GeV];Purity")
         g_p.Draw("AP")
 
         if self.rootfile:

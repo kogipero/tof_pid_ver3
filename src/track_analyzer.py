@@ -116,7 +116,6 @@ class TrackAnalyzer:
         except Exception as e:
             raise RuntimeError(f"Error getting track segment momenta: {str(e)}")
         
-    # ───────── plotting helpers ─────────
     def _plot_track_positions(self, x, y, z):
         """Histogram x, y, z positions."""
         cfg = [

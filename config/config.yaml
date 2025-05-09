@@ -1,8 +1,8 @@
 # Analysis Configuration
 analysis:
-  directory_name: 'eicrecon_ver1_24_2_NCDIS'
+  directory_name: '1_on_1_check_ver1_24_2_NCDIS_N30000_th0_005'
   analysis_event_type: 'OFFICIAL_NCDIS_PYTHIA_epic_VER25_4_1_eicrecon_ver1_24_2'
-  selected_events: 10000
+  selected_events: 30000
   verbose: true
   plot_verbose: true
   detail_plot_verbose: false
@@ -23,9 +23,9 @@ vertex_cuts:
 # File Paths
 file_paths:
   NCDIS:
-    path: '/home/onok/2025/2025-5/eic/install-v1.24/reco_pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1_N10000.root'
+    path: '/home/onok/2025/2025-5/eic/install-v1.24/reco_pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_123_N30000.root'
     description: 'NCDIS events created with Pythia'
-    number_of_events: 10000
+    number_of_events: 30000
     version: '1.24.2'
     production_method: 'Using Pythia'
   single_particle_pion:

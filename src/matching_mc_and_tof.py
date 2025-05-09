@@ -250,7 +250,7 @@ class MatchingMCAndTOF:
             filtered_etof: dataframe of endcap TOF hits that are reconstructed
         """
 
-        # ── barrel ──
+        # barrel
         btof_rec_x_arr = self.dis_file[
             self.branch['tof']['barrel']['rec_hits_branch'][1]
         ].array(library="ak")
@@ -279,7 +279,7 @@ class MatchingMCAndTOF:
             index=False
         )
 
-        # ── endcap ──
+        # endcap
         etof_rec_x_arr = self.dis_file[
             self.branch['tof']['endcap']['rec_hits_branch'][1]
         ].array(library="ak")

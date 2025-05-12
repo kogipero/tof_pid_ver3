@@ -2,7 +2,7 @@
 analysis:
   directory_name: 'eicrecon_2407_NCDIS_N50000_th2mrad'
   analysis_event_type: 'NCDIS_old_events_created_with_Pythia'
-  selected_events: 50000
+  selected_events: 1000
   verbose: true
   plot_verbose: true
   detail_plot_verbose: false
@@ -129,6 +129,18 @@ branches:
         - 'TOFBarrelRecHits.timeError'
         - 'TOFBarrelRecHits.edep'
         - 'TOFBarrelRecHits.edepError'
+      rec_hits_branch_old:
+        - 'TOFBarrelRecHit.time'
+        - 'TOFBarrelRecHit.position.x'
+        - 'TOFBarrelRecHit.position.y'
+        - 'TOFBarrelRecHit.position.z'
+        - 'TOFBarrelRecHit.positionError.xx'
+        - 'TOFBarrelRecHit.positionError.yy'
+        - 'TOFBarrelRecHit.positionError.zz'
+        - 'TOFBarrelRecHit.cellID'
+        - 'TOFBarrelRecHit.timeError'
+        - 'TOFBarrelRecHit.edep'
+        - 'TOFBarrelRecHit.edepError'
       raw_hits_branch:
         - 'TOFBarrelHits.time'
         - 'TOFBarrelHits.position.x'

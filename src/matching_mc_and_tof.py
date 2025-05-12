@@ -251,9 +251,15 @@ class MatchingMCAndTOF:
         """
 
         # barrel
-        btof_rec_x_arr = self.dis_file[
-            self.branch['tof']['barrel']['rec_hits_branch'][1]
-        ].array(library="ak")
+        if self.version == '1.24.2':
+            btof_rec_x_arr = self.dis_file[
+                self.branch['tof']['barrel']['rec_hits_branch'][1]
+            ].array(library="ak")
+        else:
+            btof_rec_x_arr = self.dis_file[
+                self.branch['tof']['barrel']['rec_hits_branch_old'][1]
+            ].array(library="ak")
+
         filtered_rows_btof = []
 
         for event in b_stable_df['event'].unique():

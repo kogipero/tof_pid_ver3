@@ -28,7 +28,30 @@ MC truth  →  EICrecon  →  TOF‑MC matching  →  TOF‑Track matching  → 
   * 中間 CSV（TOF ↔ Track マッチング結果など）※必要に応じて削除してください
 
 ---
-## 解析の流れ
+## 解析フロー概要
+
+```text
+1) MC / Track / TOF hit 取り込み
+2) TOF–MC Association  (association branch)
+3) TOF–Track Matching  (θ–φ 角距離で nearest‑hit を決定)
+4) PID 計算     
+5) ROOT / CSV に保存
+```
+
+---
+## 各モジュールの役割
+
+| ファイル                               | 役割                                                    |  
+| ------------------------------------ | ------------------------------------------------------- |
+| **`analyze_script.py`**               | メイン解析ファイル      |
+| **`mc_analyzer.py`**                 | MCParticles ブランチを読み込み、粒子 PDG、運動量、頂点を DataFrame 化        |
+| **`tof_analyzer.py`**                | Barrel / Endcap TOF Hits を抽出。        |
+| **`track_analyzer.py`**              | `_CentralTrackSegments_points` を読み込み、TOF 上でのトラックパラメータを計算 |
+| **`matching_mc_and_tof.py`**         | Association ブランチを使い **MC ↔ TOF hit** を紐付け             |
+| **`matching_tof_and_track.py`**      | θ–φ 角距離 ΔR で **TOF hit ↔ Track segment** をマッチ       |
+| **`tof_pid_performance_manager.py`** | β, 再構成質量、PID 効率/purity/separation powerを計算しヒスト生成       |
+| **`utility_function.py`**            | 座標変換や ΔR 計算などの汎用関数                                      |
+| **`*_plotter.py`**                   | ROOT ヒスト / グラフ作成専用クラス                                   |
 
 ---
 

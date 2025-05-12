@@ -69,12 +69,13 @@ class MCAnalyzer:
             px = self.dis_file[self.branch['mc_branch'][3]].array(library='ak')
             py = self.dis_file[self.branch['mc_branch'][4]].array(library='ak')
             pz = self.dis_file[self.branch['mc_branch'][5]].array(library='ak')
-            p = np.sqrt(px**2 + py**2 + pz**2)
-            theta = np.arctan2(np.sqrt(px**2 + py**2), pz)
-            phi = np.arctan2(py, px)
             vertex_x = self.dis_file[self.branch['mc_branch'][6]].array(library='ak')
             vertex_y = self.dis_file[self.branch['mc_branch'][7]].array(library='ak')
             vertex_z = self.dis_file[self.branch['mc_branch'][8]].array(library='ak')
+            
+            p = np.sqrt(px**2 + py**2 + pz**2)
+            theta = np.arctan2(np.sqrt(px**2 + py**2), pz)
+            phi = np.arctan2(py, px)
             
             if plot_verbose:
                 self._plot_mc_info(px, py, pz, p, theta, phi, pdg, charge, generator_status, vertex_x, vertex_y, vertex_z)

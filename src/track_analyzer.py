@@ -9,9 +9,6 @@ from typing import Tuple, List, Dict, Any, Optional
 import helper_functions as myfunc
 from track_plotter import TrackPlotter
 
-# this analyzer is getting track segments from the ROOT file
-# and splitting them into individual tracks
-
 @dataclass
 class TrackSegmentInfo:
     """Data class to store track segment information."""
@@ -103,11 +100,12 @@ class TrackAnalyzer:
             px = self.dis_file[self.branch['points_branch'][3]].array(library='ak')
             py = self.dis_file[self.branch['points_branch'][4]].array(library='ak')
             pz = self.dis_file[self.branch['points_branch'][5]].array(library='ak')
+            pathlength = self.dis_file[self.branch['points_branch'][6]].array(library='ak')
+            
             p = np.sqrt(px**2 + py**2 + pz**2)
             pt = np.sqrt(px**2 + py**2)
             theta = np.arctan2(pt, pz)
             phi = np.arctan2(py, px)
-            pathlength = self.dis_file[self.branch['points_branch'][6]].array(library='ak')
             
             if plot_verbose:
                 self._plot_track_momenta(px, py, pz, p, pt, theta, phi, pathlength)
@@ -316,7 +314,6 @@ class TrackAnalyzer:
                         btof["segment_id"].append(seg.segment_id)
                         btof["track_p"].append(pi)
                         btof["track_pt"].append(pti)
-
 
                     for xi, yi, zi, ri, pli, pi, pti in zip(
                         seg.x[endcap_mask],

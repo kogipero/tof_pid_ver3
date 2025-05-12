@@ -29,12 +29,12 @@ class MatchingMCAndTOF:
         name: str,
         dis_file: uproot.TTree
     ):
-        self.branch   = branch
-        self.version  = version
+        self.branch = branch
+        self.version = version
         self.rootfile = rootfile
-        self.name     = name
+        self.name = name
         self.dis_file = dis_file
-        self.plotter  = MatchingMCAndTOFPlotter(rootfile, name)
+        self.plotter = MatchingMCAndTOFPlotter(rootfile, name)
 
         tof_br = branch['tof']
 
@@ -92,8 +92,11 @@ class MatchingMCAndTOF:
             self._plot_matched_hits(b_stable, area="btof_stable")
             self._plot_matched_hits(e_stable, area="etof_stable")
 
-        # ── 3) Reconstructed-only filter ──
-        b_reco_df, e_reco_df = self.isReconstructedHit(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
+        # ── 3) Reconstructed-only hits or conversion reconstructed hits ──
+        if self.version == '1.24.2':
+            b_reco_df, e_reco_df = self.ConversionReconstructedHit(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
+        else:
+            b_reco_df, e_reco_df = self.isReconstructedHit(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
         b_reco = MatchedHitInfo(df=b_reco_df,
                                 ak_array=ak.Array(b_reco_df.to_dict("list")))
         e_reco = MatchedHitInfo(df=e_reco_df,
@@ -323,6 +326,70 @@ class MatchingMCAndTOF:
                 df=filtered_etof,
                 ak_array=ak.Array(filtered_etof.to_dict("list"))
             )
+            self._plot_matched_hits(b_reco_info, area="btof_reco")
+            self._plot_matched_hits(e_reco_info, area="etof_reco")
+
+        return filtered_btof, filtered_etof
+    
+    def ConversionReconstructedHit(
+        self,
+        b_stable_df: pd.DataFrame,
+        e_stable_df: pd.DataFrame,
+        plot_verbose: bool = False
+    ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+
+        rec_cols_b = self.branch["tof"]["barrel"]["rec_hits_branch"]
+        rec_arrs_b = {c: self.dis_file[c].array(library="ak") for c in rec_cols_b}
+
+        filtered_rows_btof = []
+        for event in b_stable_df["event"].unique():
+            df_evt_truth = b_stable_df[b_stable_df["event"] == event].reset_index(drop=True)
+            truth_x = df_evt_truth["tof_pos_x"].values.astype(float)
+
+            rec_x = np.asarray(rec_arrs_b[rec_cols_b[1]][event], dtype=float)
+            for ihit, x in enumerate(rec_x):
+                if np.any(np.isclose(truth_x, x, atol=1e-1)):     
+                    row = { "event": event }
+                    for col in rec_cols_b:
+                        key = col.split(".")[-1]                 
+                        row[key] = rec_arrs_b[col][event][ihit]
+                    filtered_rows_btof.append(pd.DataFrame([row]))
+
+        filtered_btof = (pd.concat(filtered_rows_btof, ignore_index=True)
+                        if filtered_rows_btof else
+                        pd.DataFrame())
+        
+        rec_cols_e = self.branch["tof"]["endcap"]["rec_hits_branch"]
+        rec_arrs_e = {c: self.dis_file[c].array(library="ak") for c in rec_cols_e}
+
+        filtered_rows_etof = []
+        for event in e_stable_df["event"].unique():
+            df_evt_truth = e_stable_df[e_stable_df["event"] == event].reset_index(drop=True)
+            truth_x = df_evt_truth["tof_pos_x"].values.astype(float)
+
+            rec_x = np.asarray(rec_arrs_e[rec_cols_e[1]][event], dtype=float)
+            for ihit, x in enumerate(rec_x):
+                if np.any(np.isclose(truth_x, x, atol=1e-1)):
+                    row = { "event": event }
+                    for col in rec_cols_e:
+                        key = col.split(".")[-1]
+                        row[key] = rec_arrs_e[col][event][ihit]
+                    filtered_rows_etof.append(pd.DataFrame([row]))
+
+        filtered_etof = (pd.concat(filtered_rows_etof, ignore_index=True)
+                        if filtered_rows_etof else
+                        pd.DataFrame())
+
+        filtered_btof.to_csv(f"./out/{self.name}/filtered_stable_btof_hit_info.csv",
+                            index=False)
+        filtered_etof.to_csv(f"./out/{self.name}/filtered_stable_etof_hit_info.csv",
+                            index=False)
+
+        if plot_verbose:
+            b_reco_info = MatchedHitInfo(filtered_btof,
+                                        ak.Array(filtered_btof.to_dict("list")))
+            e_reco_info = MatchedHitInfo(filtered_etof,
+                                        ak.Array(filtered_etof.to_dict("list")))
             self._plot_matched_hits(b_reco_info, area="btof_reco")
             self._plot_matched_hits(e_reco_info, area="etof_reco")
 

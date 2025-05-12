@@ -45,7 +45,6 @@ class TOFAnalyzer:
         Args:
             area: Area of the TOF detector (e.g., 'barrel', 'endcap')
             kind: Type of branch (e.g., 'raw_hits_branch', 'rec_hits_branch')
-            
         Returns:
             List of branch names
         """

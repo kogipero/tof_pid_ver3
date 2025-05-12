@@ -2,7 +2,7 @@
 analysis:
   directory_name: 'eicrecon_2407_NCDIS_N50000_th2mrad'
   analysis_event_type: 'NCDIS_old_events_created_with_Pythia'
-  selected_events: 1000
+  selected_events: 50000
   verbose: true
   plot_verbose: true
   detail_plot_verbose: false

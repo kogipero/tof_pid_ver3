@@ -40,7 +40,7 @@ class MatchingTOFAndTrackPlotter:
             (data['mc_vertex_y'], [-100, 100], 'Hit z [mm]', 'hit_z'),
             (data['mc_vertex_z'], [-100, 100], 'Hit z [mm]', 'hit_z'),
             (data['track_pathlength'], [0, 2000], 'track_pathlength [mm]', 'track_pathlength'),
-            (data['delta_angle'], [0, 0.5], 'delta_angle [rad]', 'delta_angle'),
+            (data['delta_angle']*1000, [0, 2.0], 'delta_angle [mrad]', 'delta_angle'),
         ]
         
         for data_array, hist_range, xlabel, outputname in plot_configs:

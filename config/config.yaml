@@ -1,12 +1,12 @@
 # Analysis Configuration
 analysis:
-  directory_name: '1_on_1_check_ver1_24_2_NCDIS_N30000_th0_005'
-  analysis_event_type: 'OFFICIAL_NCDIS_PYTHIA_epic_VER25_4_1_eicrecon_ver1_24_2'
-  selected_events: 30000
+  directory_name: 'eicrecon_2407_NCDIS_N50000_th2mrad'
+  analysis_event_type: 'NCDIS_old_events_created_with_Pythia'
+  selected_events: 50000
   verbose: true
   plot_verbose: true
   detail_plot_verbose: false
-  version: '1.24.2'
+  version: '24.7.0'
 
 # Vertex Cuts
 vertex_cuts:
@@ -23,18 +23,24 @@ vertex_cuts:
 # File Paths
 file_paths:
   NCDIS:
-    path: '/home/onok/2025/2025-5/eic/install-v1.24/reco_pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_123_N30000.root'
-    description: 'NCDIS events created with Pythia'
-    number_of_events: 30000
+    path: '/home/onok/2025/2025-5/eic/create_events/my_pythia/recon_out/rec_pythia8NCDIS_18x275_minQ2=1_beamEffects_xAngle=-0.025_hiDiv_51_100_N50000.root'
+    description: 'NCDIS_events_created_with_Pythia'
+    number_of_events: 50000
     version: '1.24.2'
     production_method: 'Using Pythia'
   single_particle_pion:
-    path: '/home/onok/eic/create_events/recon_out/pi/Rec_single_particle_pion_N1000000_100m_5g_20241214.root'
-    description: 'Single particle pion events'
-    number_of_events: 1000000
-    version: '24.12.0'
+    path: '/home/onok/2025/2025-5/eic/create_events/my_pythia/recon_out/single_particle/rec_pi_uniform_N100000_eicrecon_ver1_24_2.root'
+    description: 'single_particle_pion_events'
+    number_of_events: 100000
+    version: '1.24.2'
     production_method: 'Single particle'
-  # Add other file paths as needed
+  
+  NCDIS_old:
+    path: '/home/onok/eic/create_events/recon_out/pythia/EICrecon_ver24.07.0/EICrecon_ver_24_7_0_merged_1000files.root'
+    description: 'NCDIS_old_events_created_with_Pythia'
+    number_of_events: 50000
+    version: '24.7.0'
+    production_method: 'Using Pythia'
 
 # Branch Names
 branches:

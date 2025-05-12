@@ -68,25 +68,25 @@ class TOFPIDPerformancePlotter:
             )
         
         if "momentum" in data and "mc_momentum" in data:
-            data["momentum_reso"] = data["momentum"] - data["mc_momentum"]
+            data["momentum_reso"] = data["momentum"] - data["mc_momentum"] / data["mc_momentum"]
             myfunc.make_histogram_root(
-                data["momentum_reso"], 100, [-0.2, 0.2],
+                data["momentum_reso"], 100, [-2.0, 2.0],
                 f"Momentum resolution_{area}; p [GeV/c];Entries",
                 f"p_reso_hist_{area}", rootfile=self.rootfile
             )
 
         if "track_pos_phi" in data and "tof_pos_phi" in data:
-            data["phi_reso"] = data["track_pos_phi"] - data["tof_pos_phi"]
+            data["phi_reso"] = (data["track_pos_phi"] - data["tof_pos_phi"])*1000
             myfunc.make_histogram_root(
-                data["phi_reso"], 100, [-0.2, 0.2],
+                data["phi_reso"], 100, [-20, 20],
                 f"Phi resolution_{area}; Phi [rad];Entries",
                 f"phi_reso_hist_{area}", rootfile=self.rootfile
             )
 
         if "track_pos_theta" in data and "tof_pos_theta" in data:
-            data["theta_reso"] = data["track_pos_theta"] - data["tof_pos_theta"]
+            data["theta_reso"] = (data["track_pos_theta"] - data["tof_pos_theta"])*1000
             myfunc.make_histogram_root(
-                data["theta_reso"], 100, [-0.2, 0.2],
+                data["theta_reso"], 100, [-20, 20],
                 f"Theta resolution_{area}; Theta [rad];Entries",
                 f"theta_reso_hist_{area}", rootfile=self.rootfile
             )

@@ -127,7 +127,7 @@ class TOFAnalyzer:
             
     def get_tof_info(self, selected_events: int, plot_verbose: bool = False) -> Tuple[TOFHitInfo, TOFHitInfo]:
         """
-        Get TOF hit information for both barrel and endcap detectors.
+        Get Barrel/Endcap TOF hit information.
         
         Args:
             selected_events: Number of events to process

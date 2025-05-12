@@ -52,7 +52,10 @@ class MatchingTOFAndTrack:
         verbose: bool = False,
         plot_verbose: bool = False,
     ):
-        """TOF ↔︎ Track matching """
+        """
+        TOF ↔︎ Track matching
+        judge the matching by the angle distance between the track and the hit
+        """
 
         angle_threshold_btof = 0.002  # rad
         angle_threshold_etof     = 0.01   # rad

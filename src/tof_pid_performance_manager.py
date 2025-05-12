@@ -276,9 +276,6 @@ class ToFPIDPerformanceManager:
                 centers_clean, pi_k_clean, k_p_clean, area=area
             )
 
-    # ------------------------------------------------------------------
-    # 3) Purity vs momentum (efficiency variant)
-    # ------------------------------------------------------------------
     def process_purity_vs_momentum(
         self,
         btof_calc_mass: np.ndarray,

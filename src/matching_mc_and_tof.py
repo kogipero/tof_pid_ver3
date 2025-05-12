@@ -63,8 +63,8 @@ class MatchingMCAndTOF:
         plot_verbose: bool=False
     ) -> Tuple[MatchedHitInfo, MatchedHitInfo]:
         """
-        1) Match MC particles with TOF hits.
-        2) Filter stable particles.
+        1) Associate MC particles with TOF hits.
+        2) Filter stable particles and vertex cut. (generator_status==1, charge!=0, |vertex_z|<5)
         3) Filter reconstructed hits.
         """
         # ── 1) raw matching ──
@@ -337,6 +337,16 @@ class MatchingMCAndTOF:
         e_stable_df: pd.DataFrame,
         plot_verbose: bool = False
     ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """
+        Checks if a hit is reconstructed and converted.
+        Args:
+            b_stable_df: dataframe of stable barrel TOF hits 
+            e_stable_df: dataframe of stable endcap TOF hits 
+            plot_verbose: True to plot the matched hits
+        Returns:
+            filtered_btof: dataframe of barrel TOF hits that are reconstructed
+            filtered_etof: dataframe of endcap TOF hits that are reconstructed
+        """
 
         rec_cols_b = self.branch["tof"]["barrel"]["rec_hits_branch"]
         rec_arrs_b = {c: self.dis_file[c].array(library="ak") for c in rec_cols_b}

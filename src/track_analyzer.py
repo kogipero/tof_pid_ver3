@@ -87,7 +87,7 @@ class TrackAnalyzer:
     
     def get_track_segments_momentum(self, verbose: bool = False, plot_verbose: bool = False) -> Tuple[ak.Array, ak.Array, ak.Array, ak.Array, ak.Array, ak.Array, ak.Array, ak.Array]:
         """
-        Get track segment momenta.
+        Get track segment momentum.
         
         Args:
             verbose: Whether to print detailed information
@@ -112,7 +112,7 @@ class TrackAnalyzer:
             
             return px, py, pz, p, pt, theta, phi, pathlength
         except Exception as e:
-            raise RuntimeError(f"Error getting track segment momenta: {str(e)}")
+            raise RuntimeError(f"Error getting track segment momentum: {str(e)}")
         
     def _plot_track_positions(self, x, y, z):
         """Histogram x, y, z positions."""
@@ -260,7 +260,7 @@ class TrackAnalyzer:
         plot_verbose: bool = False
     ) -> Tuple[ak.Array, ak.Array]:
         """
-        Get track segments that intersect with TOF detectors.
+        Get track segments on Barrel/Endcap TOF .
         
         Args:
             tracks: List of TrackInfo objects

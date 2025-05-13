@@ -361,9 +361,6 @@ class MatchingMCAndTOF:
             Reconstructed endcap-TOF hits that match the truth hits.
         """
 
-        # ------------------------------------------------------------
-        # 1) Barrel side
-        # ------------------------------------------------------------
         rec_cols_b = self.branch["tof"]["barrel"]["rec_hits_branch"]
         rec_arrs_b = {c: self.dis_file[c].array(library="ak") for c in rec_cols_b}
 
@@ -381,9 +378,6 @@ class MatchingMCAndTOF:
 
         filtered_btof = pd.DataFrame(filtered_rows_btof)
 
-        # ------------------------------------------------------------
-        # 2) Endcap side
-        # ------------------------------------------------------------
         rec_cols_e = self.branch["tof"]["endcap"]["rec_hits_branch"]
         rec_arrs_e = {c: self.dis_file[c].array(library="ak") for c in rec_cols_e}
 
@@ -401,23 +395,17 @@ class MatchingMCAndTOF:
 
         filtered_etof = pd.DataFrame(filtered_rows_etof)
 
-        # ------------------------------------------------------------
-        # 3) Save CSV
-        # ------------------------------------------------------------
         filtered_btof.to_csv(f"./out/{self.name}/filtered_stable_btof_hit_info.csv", index=False)
         filtered_etof.to_csv(f"./out/{self.name}/filtered_stable_etof_hit_info.csv", index=False)
 
-        # ------------------------------------------------------------
-        # 4) Optional debug plots
-        # ------------------------------------------------------------
         if plot_verbose:
             b_reco_info = MatchedHitInfo(
                 df=filtered_btof,
-                ak_array=ak.Array(filtered_btof.to_dict(orient="records"))   # ★ 修正ポイント
+                ak_array=ak.Array(filtered_btof.to_dict(orient="records"))   
             )
             e_reco_info = MatchedHitInfo(
                 df=filtered_etof,
-                ak_array=ak.Array(filtered_etof.to_dict(orient="records"))   # ★ 修正ポイント
+                ak_array=ak.Array(filtered_etof.to_dict(orient="records"))   
             )
             self._plot_matched_hits(b_reco_info, area="btof_reco")
             self._plot_matched_hits(e_reco_info, area="etof_reco")

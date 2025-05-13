@@ -1,8 +1,8 @@
 # Analysis Configuration
 analysis:
-  directory_name: 'eicrecon_1_24_2_NCDIS_N100000_th1mrad'
+  directory_name: 'test'
   analysis_event_type: 'NCDIS_events_created_with_Pythia'
-  selected_events: 100000
+  selected_events: 1000
   verbose: true
   plot_verbose: true
   detail_plot_verbose: false

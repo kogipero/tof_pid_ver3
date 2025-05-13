@@ -22,6 +22,7 @@ class TOFPIDPerformancePlotter:
             "pi": (211, -211),
             "k": (321, -321),
             "p": (2212, -2212),
+            "e": (11, -11),
         }
 
         pdg  = data.get("pdg", None)
@@ -112,7 +113,7 @@ class TOFPIDPerformancePlotter:
                         data["beta_inverse"][mask],
                         100, [0.0, 3.5], 100, [0.8, 1.8],
                         title     = f"beta_inverse_vs_p_({tag})_{area}",
-                        xlabel    = "p [GeV/c]",
+                        xlabel    = "p [GeV]",
                         ylabel    = "beta inverse",
                         outputname= f"beta_inv_vs_p_{tag}_{area}",
                         rootfile  = self.rootfile

@@ -154,16 +154,18 @@ class ToFPIDPerformanceManager:
             "pi": (pdg_np == 211) | (pdg_np == -211),
             "k": (pdg_np == 321) | (pdg_np == -321),
             "p": (pdg_np == 2212) | (pdg_np == -2212),
+            "e": (pdg_np == 11) | (pdg_np == -11),
         }
-        masses_true = {"pi": 139.57, "k": 493.677, "p": 938.272}
-        mergins = {"pi": MERGIN_PI, "k": MERGIN_K, "p": MERGIN_P}
+        masses_true = {"pi": 139.57, "k": 493.677, "p": 938.272, "e": 0.511}
+        mergins = {"pi": MERGIN_PI, "k": MERGIN_K, "p": MERGIN_P, "e": 0.1}
         mergins_large = {
             "pi": LARGE_MERGIN_PI,
             "k": LARGE_MERGIN_K,
             "p": LARGE_MERGIN_P,
+            "e": 0.1,
         }
 
-        for key in ("pi", "k", "p"):
+        for key in ("pi", "k", "p", "e"):
             mask = masks[key]
             true_mass = masses_true[key]
             n_true = mask.sum()

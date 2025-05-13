@@ -35,7 +35,7 @@ class TOFPIDPerformancePlotter:
                 100, [0.0, 5.0],              
                 100, [0.8, 1.8],              
                 title     = "beta_inverse_vs_p",    
-                xlabel    = "p [GeV/c]",      
+                xlabel    = "p [GeV]",      
                 ylabel    = "beta inverse",         
                 outputname= f"beta_inv_vs_p_{area}",   
                 rootfile  = self.rootfile
@@ -57,7 +57,7 @@ class TOFPIDPerformancePlotter:
         if "momentum" in data:
             myfunc.make_histogram_root(
                 data["momentum"], 100, [0, 3.5],
-                f"Momentum_{area}; p [GeV/c];Entries",
+                f"Momentum_{area}; p [GeV];Entries",
                 f"p_hist_{area}", rootfile=self.rootfile
             )
         if "beta_inverse" in data:
@@ -68,10 +68,10 @@ class TOFPIDPerformancePlotter:
             )
         
         if "momentum" in data and "mc_momentum" in data:
-            data["momentum_reso"] = data["momentum"] - data["mc_momentum"] / data["mc_momentum"]
+            data["momentum_reso"] = (data["momentum"] - data["mc_momentum"]) / data["mc_momentum"]
             myfunc.make_histogram_root(
                 data["momentum_reso"], 100, [-2.0, 2.0],
-                f"Momentum resolution_{area}; p [GeV/c];Entries",
+                f"Momentum resolution_{area}; p [GeV];Entries",
                 f"p_reso_hist_{area}", rootfile=self.rootfile
             )
 
@@ -79,7 +79,7 @@ class TOFPIDPerformancePlotter:
             data["phi_reso"] = (data["track_pos_phi"] - data["tof_pos_phi"])*1000
             myfunc.make_histogram_root(
                 data["phi_reso"], 100, [-20, 20],
-                f"Phi resolution_{area}; Phi [rad];Entries",
+                f"Phi resolution_{area}; Phi [mrad];Entries",
                 f"phi_reso_hist_{area}", rootfile=self.rootfile
             )
 
@@ -87,7 +87,7 @@ class TOFPIDPerformancePlotter:
             data["theta_reso"] = (data["track_pos_theta"] - data["tof_pos_theta"])*1000
             myfunc.make_histogram_root(
                 data["theta_reso"], 100, [-20, 20],
-                f"Theta resolution_{area}; Theta [rad];Entries",
+                f"Theta resolution_{area}; Theta [mrad];Entries",
                 f"theta_reso_hist_{area}", rootfile=self.rootfile
             )
 

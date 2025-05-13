@@ -93,10 +93,12 @@ class MatchingMCAndTOF:
             self._plot_matched_hits(e_stable, area="etof_stable")
 
         # ── 3) Reconstructed-only hits or conversion reconstructed hits ──
-        if self.version == '1.24.2':
-            b_reco_df, e_reco_df = self.ConversionReconstructedHit(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
-        else:
-            b_reco_df, e_reco_df = self.isReconstructedHit(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
+        # if self.version == '1.24.2':
+        #     b_reco_df, e_reco_df = self.ConversionReconstructedHit(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
+        # else:
+        #     b_reco_df, e_reco_df = self.isReconstructedHit(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
+        b_reco_df, e_reco_df = self.isReconstructedHit(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
+        
         b_reco = MatchedHitInfo(df=b_reco_df,
                                 ak_array=ak.Array(b_reco_df.to_dict("list")))
         e_reco = MatchedHitInfo(df=e_reco_df,
@@ -338,68 +340,85 @@ class MatchingMCAndTOF:
         plot_verbose: bool = False
     ) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
-        Checks if a hit is reconstructed and converted.
-        Args:
-            b_stable_df: dataframe of stable barrel TOF hits 
-            e_stable_df: dataframe of stable endcap TOF hits 
-            plot_verbose: True to plot the matched hits
-        Returns:
-            filtered_btof: dataframe of barrel TOF hits that are reconstructed
-            filtered_etof: dataframe of endcap TOF hits that are reconstructed
+        Keep only the TOF hits (barrel / endcap) that are actually reconstructed
+        and return them as new DataFrames.  If plot_verbose is True, matched-hit
+        plots are generated using the filtered sets.
+
+        Parameters
+        ----------
+        b_stable_df : pd.DataFrame
+            Stable-particle barrel-TOF truth hits.
+        e_stable_df : pd.DataFrame
+            Stable-particle endcap-TOF truth hits.
+        plot_verbose : bool, optional
+            Produce sanity plots of the matched hits.
+
+        Returns
+        -------
+        filtered_btof : pd.DataFrame
+            Reconstructed barrel-TOF hits that match the truth hits.
+        filtered_etof : pd.DataFrame
+            Reconstructed endcap-TOF hits that match the truth hits.
         """
 
+        # ------------------------------------------------------------
+        # 1) Barrel side
+        # ------------------------------------------------------------
         rec_cols_b = self.branch["tof"]["barrel"]["rec_hits_branch"]
         rec_arrs_b = {c: self.dis_file[c].array(library="ak") for c in rec_cols_b}
 
         filtered_rows_btof = []
         for event in b_stable_df["event"].unique():
-            df_evt_truth = b_stable_df[b_stable_df["event"] == event].reset_index(drop=True)
-            truth_x = df_evt_truth["tof_pos_x"].values.astype(float)
+            truth_x = b_stable_df.loc[b_stable_df["event"] == event, "tof_pos_x"].astype(float).values
+            rec_x   = np.asarray(rec_arrs_b[rec_cols_b[1]][event], dtype=float)
 
-            rec_x = np.asarray(rec_arrs_b[rec_cols_b[1]][event], dtype=float)
             for ihit, x in enumerate(rec_x):
-                if np.any(np.isclose(truth_x, x, atol=1e-1)):     
-                    row = { "event": event }
+                if np.any(np.isclose(truth_x, x, atol=1e-1)):
+                    row = {"event": int(event)}
                     for col in rec_cols_b:
-                        key = col.split(".")[-1]                 
-                        row[key] = rec_arrs_b[col][event][ihit]
-                    filtered_rows_btof.append(pd.DataFrame([row]))
+                        row[col.split(".")[-1]] = rec_arrs_b[col][event][ihit]
+                    filtered_rows_btof.append(row)
 
-        filtered_btof = (pd.concat(filtered_rows_btof, ignore_index=True)
-                        if filtered_rows_btof else
-                        pd.DataFrame())
-        
+        filtered_btof = pd.DataFrame(filtered_rows_btof)
+
+        # ------------------------------------------------------------
+        # 2) Endcap side
+        # ------------------------------------------------------------
         rec_cols_e = self.branch["tof"]["endcap"]["rec_hits_branch"]
         rec_arrs_e = {c: self.dis_file[c].array(library="ak") for c in rec_cols_e}
 
         filtered_rows_etof = []
         for event in e_stable_df["event"].unique():
-            df_evt_truth = e_stable_df[e_stable_df["event"] == event].reset_index(drop=True)
-            truth_x = df_evt_truth["tof_pos_x"].values.astype(float)
+            truth_x = e_stable_df.loc[e_stable_df["event"] == event, "tof_pos_x"].astype(float).values
+            rec_x   = np.asarray(rec_arrs_e[rec_cols_e[1]][event], dtype=float)
 
-            rec_x = np.asarray(rec_arrs_e[rec_cols_e[1]][event], dtype=float)
             for ihit, x in enumerate(rec_x):
                 if np.any(np.isclose(truth_x, x, atol=1e-1)):
-                    row = { "event": event }
+                    row = {"event": int(event)}
                     for col in rec_cols_e:
-                        key = col.split(".")[-1]
-                        row[key] = rec_arrs_e[col][event][ihit]
-                    filtered_rows_etof.append(pd.DataFrame([row]))
+                        row[col.split(".")[-1]] = rec_arrs_e[col][event][ihit]
+                    filtered_rows_etof.append(row)
 
-        filtered_etof = (pd.concat(filtered_rows_etof, ignore_index=True)
-                        if filtered_rows_etof else
-                        pd.DataFrame())
+        filtered_etof = pd.DataFrame(filtered_rows_etof)
 
-        filtered_btof.to_csv(f"./out/{self.name}/filtered_stable_btof_hit_info.csv",
-                            index=False)
-        filtered_etof.to_csv(f"./out/{self.name}/filtered_stable_etof_hit_info.csv",
-                            index=False)
+        # ------------------------------------------------------------
+        # 3) Save CSV
+        # ------------------------------------------------------------
+        filtered_btof.to_csv(f"./out/{self.name}/filtered_stable_btof_hit_info.csv", index=False)
+        filtered_etof.to_csv(f"./out/{self.name}/filtered_stable_etof_hit_info.csv", index=False)
 
+        # ------------------------------------------------------------
+        # 4) Optional debug plots
+        # ------------------------------------------------------------
         if plot_verbose:
-            b_reco_info = MatchedHitInfo(filtered_btof,
-                                        ak.Array(filtered_btof.to_dict("list")))
-            e_reco_info = MatchedHitInfo(filtered_etof,
-                                        ak.Array(filtered_etof.to_dict("list")))
+            b_reco_info = MatchedHitInfo(
+                df=filtered_btof,
+                ak_array=ak.Array(filtered_btof.to_dict(orient="records"))   # ★ 修正ポイント
+            )
+            e_reco_info = MatchedHitInfo(
+                df=filtered_etof,
+                ak_array=ak.Array(filtered_etof.to_dict(orient="records"))   # ★ 修正ポイント
+            )
             self._plot_matched_hits(b_reco_info, area="btof_reco")
             self._plot_matched_hits(e_reco_info, area="etof_reco")
 

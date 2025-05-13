@@ -1,12 +1,12 @@
 # Analysis Configuration
 analysis:
-  directory_name: 'eicrecon_2407_NCDIS_N50000_th2mrad'
-  analysis_event_type: 'NCDIS_old_events_created_with_Pythia'
-  selected_events: 50000
+  directory_name: 'eicrecon_1_24_2_NCDIS_N100000_th1mrad'
+  analysis_event_type: 'NCDIS_events_created_with_Pythia'
+  selected_events: 100000
   verbose: true
   plot_verbose: true
   detail_plot_verbose: false
-  version: '24.7.0'
+  version: '1.24.2'
 
 # Vertex Cuts
 vertex_cuts:
@@ -23,7 +23,7 @@ vertex_cuts:
 # File Paths
 file_paths:
   NCDIS:
-    path: '/home/onok/2025/2025-5/eic/create_events/my_pythia/recon_out/rec_pythia8NCDIS_18x275_minQ2=1_beamEffects_xAngle=-0.025_hiDiv_51_100_N50000.root'
+    path: '/home/onok/2025/2025-5/eic/create_events/my_pythia/recon_out/pythia/rec_pythia8NCDIS_18x275_minQ2=1_beamEffects_xAngle=-0.025_hiDiv_1_100_N100000.root'
     description: 'NCDIS_events_created_with_Pythia'
     number_of_events: 50000
     version: '1.24.2'
@@ -35,11 +35,23 @@ file_paths:
     version: '1.24.2'
     production_method: 'Single particle'
   
+  single_particle_kaon:
+    path: '/home/onok/2025/2025-5/eic/create_events/my_pythia/recon_out/single_particle/rec_kaon_uniform_N100000_eicrecon_ver1_24_2.root'
+    description: 'single_particle_kaon_events'
+    number_of_events: 100000
+    version: '1.24.2'
+
+  single_particle_proton:
+    path: '/home/onok/2025/2025-5/eic/create_events/my_pythia/recon_out/single_particle/rec_proton_uniform_N100000_eicrecon_ver1_24_2.root'
+    description: 'single_particle_proton_events'
+    number_of_events: 100000
+    version: '1.24.2'
+  
   NCDIS_old:
     path: '/home/onok/eic/create_events/recon_out/pythia/EICrecon_ver24.07.0/EICrecon_ver_24_7_0_merged_1000files.root'
     description: 'NCDIS_old_events_created_with_Pythia'
     number_of_events: 50000
-    version: '24.7.0'
+    version: '1.15.0'
     production_method: 'Using Pythia'
 
 # Branch Names

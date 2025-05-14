@@ -165,7 +165,7 @@ def main():
     parser.add_argument('--config', type=str, required=True, help='Path to configuration file')
     parser.add_argument('--output', type=str, required=True, help='Output ROOT file name')
     parser.add_argument('--filetype', type=str, choices=['NCDIS', 'single_particle_pion','NCDIS_old'], required=True,
-                      help='Type of input file (NCDIS or single_particle_pion or NCDIS_old)')
+                        help='Type of input file (NCDIS or single_particle_pion or NCDIS_old)')
     args = parser.parse_args()
     
     try:

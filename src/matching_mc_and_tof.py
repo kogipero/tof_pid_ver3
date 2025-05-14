@@ -21,7 +21,6 @@ class MatchedHitInfo:
 
 class MatchingMCAndTOF:
     """MC and TOF matching class."""
-    
     def __init__(
         self,
         branch: Dict[str, Any],
@@ -38,16 +37,15 @@ class MatchingMCAndTOF:
         self.plotter = MatchingMCAndTOFPlotter(rootfile, name)
 
         tof_br = branch['tof']
-
         self.btof_rec_x_branch = tof_br['barrel']['rec_hits_branch'][1]
         self.etof_rec_x_branch = tof_br['endcap']['rec_hits_branch'][1]
-        # Barrel TOF
+
         self.btof_raw_hit_mc_associaction_branch = (
             tof_br['barrel']['mc_associations_ver1_24_2_branch']
             if version=='1.24.2'
             else tof_br['barrel']['mc_associations_branch']
         )
-        # Endcap TOF
+
         self.etof_raw_hit_mc_associaction_branch = (
             tof_br['endcap']['mc_associations_ver1_24_2_branch']
             if version=='1.24.2'
@@ -68,7 +66,7 @@ class MatchingMCAndTOF:
         2) Filter stable particles and vertex cut. (generator_status==1, charge!=0, |vertex_z|<5)
         3) Filter reconstructed hits.
         """
-        # ── 1) raw matching ──
+        # ── 1) Associate MC particles with truth TOF hits ──
         b_raw = self._build_hit_info(mc_info, btof_info,
                                      self.btof_raw_hit_mc_associaction_branch,
                                      selected_events, area="btof_raw")
@@ -98,8 +96,6 @@ class MatchingMCAndTOF:
             b_reco_df, e_reco_df = self.replace_tof_with_reconstructed(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
         else:
             b_reco_df, e_reco_df = self.isReconstructedHit(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
-
-        # b_reco_df, e_reco_df = self.isReconstructedHit(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
         
         b_reco = MatchedHitInfo(df=b_reco_df,
                                 ak_array=ak.Array(b_reco_df.to_dict("list")))
@@ -121,6 +117,7 @@ class MatchingMCAndTOF:
         area: str
     ) -> MatchedHitInfo:
         """ return matched hit information """
+        # MC assoc_branch[0] is associated with the TOF hits index
         mc_index_awk = self.dis_file[assoc_branch[0]].array(library="ak")[:n_evt]
         rows = []
         for ev in tqdm(range(n_evt), desc=f"{area} match", unit="evt"):
@@ -128,11 +125,11 @@ class MatchingMCAndTOF:
             if not ak.any(sel): continue
 
             mc_sel = mc_index_awk[ev][sel]
-            # TOF
+            # TOF info
             hx, hy, hz = tof.pos_x[ev][sel], tof.pos_y[ev][sel], tof.pos_z[ev][sel]
             htime     = tof.time[ev][sel]
             hphi, htheta, hr = tof.phi[ev][sel], tof.theta[ev][sel], tof.r[ev][sel]
-            # MC
+            # MC info
             mpdg = mc.pdg[ev][mc_sel]
             mstat= mc.generator_status[ev][mc_sel]
             mchg = mc.charge[ev][mc_sel]
@@ -213,12 +210,10 @@ class MatchingMCAndTOF:
         Robust difference plot: rows are matched by (event, tof_pos_x)
         within ±tol.  Unmatched truth hits are ignored.
         """
-
+        # Return values want to covert pd.DataFrame ,so I use assign method. Maybe another way would be better.
         root_dir = root_dir or f"./out/{self.name}"
-
         key_truth = df_truth["tof_pos_x"].round(int(-np.log10(tol)))
         key_repl  = df_replaced["tof_pos_x"].round(int(-np.log10(tol)))
-
         df_truth_ = df_truth.assign(_key=key_truth)
         df_repl_  = df_replaced.assign(_key=key_repl)
 
@@ -238,13 +233,13 @@ class MatchingMCAndTOF:
         dx = merged["tof_pos_x_tru"] - merged["tof_pos_x_rec"]
         dy = merged["tof_pos_y_tru"] - merged["tof_pos_y_rec"]
         dz = merged["tof_pos_z_tru"] - merged["tof_pos_z_rec"]
-        dt = merged["tof_time_tru"]  - merged["tof_time_rec"]
+        dt = (merged["tof_time_tru"]  - merged["tof_time_rec"]) * 1000  #ps
 
         cfgs = [
-            (dx, [-5, 5],  "Δx [mm]", "dx"),
-            (dy, [-5, 5],  "Δy [mm]", "dy"),
-            (dz, [-10,10], "Δz [mm]", "dz"),
-            (dt, [-1, 1],  "Δt [ns]", "dt"),
+            (dx, [-2, 2],  "Δx [mm]", "dx"),
+            (dy, [-2, 2],  "Δy [mm]", "dy"),
+            (dz, [-2, 2], "Δz [mm]", "dz"),
+            (dt, [-100, 100],  "Δt [ps]", "dt"),
         ]
         for data, hr, xl, tag in cfgs:
             myfunc.make_histogram_root(
@@ -434,7 +429,6 @@ class MatchingMCAndTOF:
             rec_buf: Dict[str, ak.Array] = {
                 tag: self.dis_file[tag].array(library="ak") for tag in rec_tags
             }
-
             # Replaced values will be stored in this list
             out_chunks: List[pd.DataFrame] = []
 
@@ -494,5 +488,5 @@ class MatchingMCAndTOF:
             self.plot_replacement_difference(
                 truth_etof, df_e_reco, "etof", root_dir=outdir
             )
-
+            
         return df_b_reco, df_e_reco

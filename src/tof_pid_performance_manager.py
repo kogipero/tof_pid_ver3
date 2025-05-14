@@ -218,9 +218,9 @@ class ToFPIDPerformanceManager:
             h   = r.TH1F(f"h_sep_{idx}", "", 100, 0, 1000)
             for v in vals:
                 h.Fill(float(v))
-
+                
+            h.Write()
             if h.GetEntries() < 5:
-                h.Delete()
                 return 0.0, 0.0
 
             f = r.TF1(f"f_sep_{idx}", "[0]*exp(-0.5*((x-[1])/[2])**2)", 0, 1000)
@@ -228,7 +228,6 @@ class ToFPIDPerformanceManager:
             h.Fit(f, "Q0")
             mu, sigma = f.GetParameter(1), abs(f.GetParameter(2))
 
-            h.Delete(); f.Delete()
             return mu, sigma
 
         for p_low, p_high in zip(p_bins[:-1], p_bins[1:]):
@@ -243,8 +242,8 @@ class ToFPIDPerformanceManager:
 
             # π–K separation ------------------------------------
             if len(pi_vals) >= 5 and len(k_vals) >= 5:
-                mu_pi, sigma_pi = _fit_gauss(pi_vals, 140.0)
-                mu_k , sigma_k  = _fit_gauss(k_vals , 494.0)
+                mu_pi, sigma_pi = _fit_gauss(pi_vals, 140.0, "pi")
+                mu_k , sigma_k  = _fit_gauss(k_vals , 494.0, "k")
                 if sigma_pi > 1e-6 and sigma_k > 1e-6:
                     sep_val = abs(mu_pi - mu_k) / np.sqrt(0.5*(sigma_pi**2 + sigma_k**2))
                     sep_pi_k.append(sep_val)
@@ -255,8 +254,8 @@ class ToFPIDPerformanceManager:
 
             # K–p separation ------------------------------------
             if len(k_vals) >= 5 and len(p_vals) >= 5:
-                mu_k , sigma_k = _fit_gauss(k_vals, 494.0)
-                mu_p , sigma_p = _fit_gauss(p_vals, 938.0)
+                mu_k , sigma_k = _fit_gauss(k_vals, 494.0, "k")
+                mu_p , sigma_p = _fit_gauss(p_vals, 938.0, "p")
                 if sigma_k > 1e-6 and sigma_p > 1e-6:
                     sep_val = abs(mu_k - mu_p) / np.sqrt(0.5*(sigma_k**2 + sigma_p**2))
                     sep_k_p.append(sep_val)

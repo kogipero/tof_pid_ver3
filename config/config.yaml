@@ -1,8 +1,8 @@
 # Analysis Configuration
 analysis:
-  directory_name: 'eicrecon_ver1_24_2_NCDIS_N50000_th1mrad_switch_to_rechit'
+  directory_name: 'test'
   analysis_event_type: 'NCDIS_events_created_with_Pythia'
-  selected_events: 50000
+  selected_events: 1000
   verbose: true
   plot_verbose: true
   detail_plot_verbose: false

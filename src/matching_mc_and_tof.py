@@ -67,35 +67,31 @@ class MatchingMCAndTOF:
         3) Filter reconstructed hits.
         """
         # ── 1) Associate MC particles with truth TOF hits ──
-        b_raw = self._build_hit_info(mc_info, btof_info,
-                                     self.btof_raw_hit_mc_associaction_branch,
-                                     selected_events, area="btof_raw")
-        e_raw = self._build_hit_info(mc_info, etof_info,
-                                     self.etof_raw_hit_mc_associaction_branch,
-                                     selected_events, area="etof_raw")
+        b_raw = self._build_hit_info(mc_info, btof_info, self.btof_raw_hit_mc_associaction_branch, selected_events, area="btof_raw")
+        e_raw = self._build_hit_info(mc_info, etof_info, self.etof_raw_hit_mc_associaction_branch, selected_events, area="etof_raw")
 
         if plot_verbose:
             self._plot_matched_hits(b_raw, area="btof_raw")
             self._plot_matched_hits(e_raw, area="etof_raw")
 
         # ── 2) stable-particle filter ──
-        b_stable_df, e_stable_df = self.filtered_stable_particle_hit_and_generated_point(
-            b_raw.df, e_raw.df, plot_verbose=plot_verbose
-        )
-        b_stable = MatchedHitInfo(df=b_stable_df,
-                                  ak_array=ak.Array(b_stable_df.to_dict("list")))
-        e_stable = MatchedHitInfo(df=e_stable_df,
-                                  ak_array=ak.Array(e_stable_df.to_dict("list")))
+        b_stable_df, e_stable_df = self.filtered_stable_particle_hit_and_generated_point(b_raw.df, e_raw.df, plot_verbose=plot_verbose)
+        b_stable = MatchedHitInfo(df=b_stable_df, ak_array=ak.Array(b_stable_df.to_dict("list")))
+        e_stable = MatchedHitInfo(df=e_stable_df,ak_array=ak.Array(e_stable_df.to_dict("list")))
 
         if plot_verbose:
             self._plot_matched_hits(b_stable, area="btof_stable")
             self._plot_matched_hits(e_stable, area="etof_stable")
 
         # ── 3) Reconstructed-only hits or conversion reconstructed hits ──
-        if self.version == '1.24.2':
-            b_reco_df, e_reco_df = self.replace_tof_with_reconstructed(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
-        else:
-            b_reco_df, e_reco_df = self.isReconstructedHit(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
+        b_reco_df, e_reco_df = self.smearring_TOFHit_time(
+            b_stable_df, e_stable_df, time_resolution=0.044,
+            plot_verbose=plot_verbose
+        )
+        # # if self.version == '1.24.2':
+        # #     b_reco_df, e_reco_df = self.replace_tof_with_reconstructed(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
+        # # else:
+        # #     b_reco_df, e_reco_df = self.isReconstructedHit(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
         
         b_reco = MatchedHitInfo(df=b_reco_df,
                                 ak_array=ak.Array(b_reco_df.to_dict("list")))
@@ -107,6 +103,7 @@ class MatchingMCAndTOF:
             self._plot_matched_hits(e_reco, area="etof_reco")
 
         return b_reco, e_reco
+        # return b_stable, e_stable
 
     def _build_hit_info(
         self,
@@ -254,7 +251,6 @@ class MatchingMCAndTOF:
             )
         print(f"[{detector_label}] difference plots done ({len(merged)} matches).")
 
-
     def filtered_stable_particle_hit_and_generated_point(
         self,
         btof_df: pd.DataFrame,
@@ -291,6 +287,61 @@ class MatchingMCAndTOF:
                                     area="etof_stable")
 
         return b_stable, e_stable
+
+    def smearring_TOFHit_time(
+        self,
+        b_stable_df: pd.DataFrame,
+        e_stable_df: pd.DataFrame,
+        time_resolution: float = 0.044,
+        plot_verbose: bool=False
+    ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """
+        Smearring TOF hit time with Gaussian distribution.
+        """
+
+        smear_timing_btof = np.random.normal(
+            0, time_resolution, size=len(b_stable_df)
+        )
+        smear_timing_etof = np.random.normal(
+            0, time_resolution, size=len(e_stable_df)
+        )
+        # barrel
+        b_stable_df['tof_time'] = b_stable_df['tof_time'] + smear_timing_btof
+        b_stable_df.to_csv(
+            f"./out/{self.name}/smearred_stable_btof_hit_info.csv",
+            index=False
+        )
+        # endcap
+        e_stable_df['tof_time'] = e_stable_df['tof_time'] + smear_timing_etof
+        e_stable_df.to_csv(
+            f"./out/{self.name}/smearred_stable_etof_hit_info.csv",
+            index=False
+        )
+        if plot_verbose:
+            after_smear_btof_time = b_stable_df['tof_time'].copy()
+            after_smear_etof_time = e_stable_df['tof_time'].copy()
+            myfunc.make_histogram_root(
+                smear_timing_btof*1000,
+                nbins=100,
+                hist_range=[-100, 100],
+                title="btof_smearred_time",
+                xlabel="time [ps]",
+                ylabel="Entries",
+                outputname=f"{self.name}/btof_smearred_time",
+                rootfile=self.rootfile
+            )
+            myfunc.make_histogram_root(
+                smear_timing_etof*1000,
+                nbins=100,
+                hist_range=[-100, 100],
+                title="etof_smearred_time",
+                xlabel="time [ps]",
+                ylabel="Entries",
+                outputname=f"{self.name}/etof_smearred_time",
+                rootfile=self.rootfile
+            )
+
+        return b_stable_df, e_stable_df
 
     def isReconstructedHit(
         self,

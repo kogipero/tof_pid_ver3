@@ -190,8 +190,8 @@ class ToFPIDPerformanceManager:
         track_momentums_transverse_on_tof: np.ndarray,
         *,
         area: str = "btof",
-        nbins: int = 35,
-        momentum_range: tuple[float, float] = (0.0, 3.5),
+        nbins: int = 30,
+        momentum_range: tuple[float, float] = (0.0, 1.5),
         plot_verbose: bool = False,
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
@@ -213,12 +213,14 @@ class ToFPIDPerformanceManager:
         sep_pi_k: List[float | None] = []
         sep_k_p : List[float | None] = []
 
-        def _fit_gauss(vals: np.ndarray, mu_guess: float) -> Tuple[float, float]:
+        def _fit_gauss(vals: np.ndarray, mu_guess: float, p_low: float, p_high: float) -> Tuple[float, float]:
             idx = next(self._id_counter)
-            h   = r.TH1F(f"h_sep_{idx}", "", 100, 0, 1000)
+            title = f"PID separation power ({p_low:.2f} < p < {p_high:.2f})"
+            h   = r.TH1D(f"reco_mass_{idx}_{p_low}_{p_high}", title, 100, 0, 1000)
             for v in vals:
                 h.Fill(float(v))
 
+            h.Write(f"reco_mass_{idx}_{area}")
             if h.GetEntries() < 5:
                 h.Delete()
                 return 0.0, 0.0
@@ -228,7 +230,6 @@ class ToFPIDPerformanceManager:
             h.Fit(f, "Q0")
             mu, sigma = f.GetParameter(1), abs(f.GetParameter(2))
 
-            h.Delete(); f.Delete()
             return mu, sigma
 
         for p_low, p_high in zip(p_bins[:-1], p_bins[1:]):
@@ -243,8 +244,8 @@ class ToFPIDPerformanceManager:
 
             # π–K separation ------------------------------------
             if len(pi_vals) >= 5 and len(k_vals) >= 5:
-                mu_pi, sigma_pi = _fit_gauss(pi_vals, 140.0)
-                mu_k , sigma_k  = _fit_gauss(k_vals , 494.0)
+                mu_pi, sigma_pi = _fit_gauss(pi_vals, 140.0, p_low, p_high)
+                mu_k , sigma_k  = _fit_gauss(k_vals , 494.0, p_low, p_high)
                 if sigma_pi > 1e-6 and sigma_k > 1e-6:
                     sep_val = abs(mu_pi - mu_k) / np.sqrt(0.5*(sigma_pi**2 + sigma_k**2))
                     sep_pi_k.append(sep_val)
@@ -255,8 +256,8 @@ class ToFPIDPerformanceManager:
 
             # K–p separation ------------------------------------
             if len(k_vals) >= 5 and len(p_vals) >= 5:
-                mu_k , sigma_k = _fit_gauss(k_vals, 494.0)
-                mu_p , sigma_p = _fit_gauss(p_vals, 938.0)
+                mu_k , sigma_k = _fit_gauss(k_vals, 494.0, p_low, p_high)
+                mu_p , sigma_p = _fit_gauss(p_vals, 938.0, p_low, p_high)
                 if sigma_k > 1e-6 and sigma_p > 1e-6:
                     sep_val = abs(mu_k - mu_p) / np.sqrt(0.5*(sigma_k**2 + sigma_p**2))
                     sep_k_p.append(sep_val)

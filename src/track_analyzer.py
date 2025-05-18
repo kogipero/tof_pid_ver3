@@ -284,6 +284,7 @@ class TrackAnalyzer:
                     barrel_mask = (
                         (r_arr >= 625) & (r_arr <= 660)
                         & (seg.z >= -1150) & (seg.z <= 1740)
+                        & (seg.pathlength >= 580)
                     )
                     # Endcap mask
                     endcap_mask = (

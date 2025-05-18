@@ -58,6 +58,7 @@ class MatchingTOFAndTrack:
         """
 
         angle_threshold_btof = 0.001  # rad
+        # angle_threshold_btof = 0.001  # rad
         angle_threshold_etof     = 0.01   # rad
 
         btof_matched = {                          

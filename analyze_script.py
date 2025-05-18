@@ -162,10 +162,24 @@ def analyzer(config: AnalysisConfig, output_file: str):
 def main():
     """Main function to execute the analysis."""
     parser = argparse.ArgumentParser(description='TOF PID Analysis')
-    parser.add_argument('--config', type=str, required=True, help='Path to configuration file')
-    parser.add_argument('--output', type=str, required=True, help='Output ROOT file name')
-    parser.add_argument('--filetype', type=str, choices=['NCDIS', 'single_particle_pion','NCDIS_old'], required=True,
-                        help='Type of input file (NCDIS or single_particle_pion or NCDIS_old)')
+    parser.add_argument(
+        '--config', 
+        type=str, 
+        required=True, 
+        help='Path to configuration file'
+    )
+    parser.add_argument(
+        '--output', 
+        type=str, 
+        required=True, 
+        help='Output ROOT file name'
+    )
+    parser.add_argument('--filetype', 
+                        type=str, 
+                        choices=['NCDIS', 'single_particle_pion','single_particle_kaon','single_particle_proton','NCDIS_old'], 
+                        required=True,
+                        help='Type of input file (NCDIS or single_particle_pion or single_particle_kaon or single_particle_proton or NCDIS_old)'
+    )
     args = parser.parse_args()
     
     try:

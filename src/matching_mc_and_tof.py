@@ -83,27 +83,30 @@ class MatchingMCAndTOF:
             self._plot_matched_hits(b_stable, area="btof_stable")
             self._plot_matched_hits(e_stable, area="etof_stable")
 
+        # -------------------comment out for now-------------------
         # ── 3) Reconstructed-only hits or conversion reconstructed hits ──
-        b_reco_df, e_reco_df = self.smearring_TOFHit_time(
-            b_stable_df, e_stable_df, time_resolution=0.044,
-            plot_verbose=plot_verbose
-        )
-        # # if self.version == '1.24.2':
-        # #     b_reco_df, e_reco_df = self.replace_tof_with_reconstructed(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
-        # # else:
-        # #     b_reco_df, e_reco_df = self.isReconstructedHit(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
+        # b_reco_df, e_reco_df = self.smearring_TOFHit_time(
+        #     b_stable_df, e_stable_df, time_resolution=0.044,
+        #     plot_verbose=plot_verbose
+        # )
+        # # # if self.version == '1.24.2':
+        # # #     b_reco_df, e_reco_df = self.replace_tof_with_reconstructed(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
+        # # # else:
+        # # #     b_reco_df, e_reco_df = self.isReconstructedHit(b_stable_df, e_stable_df, plot_verbose=plot_verbose)
         
-        b_reco = MatchedHitInfo(df=b_reco_df,
-                                ak_array=ak.Array(b_reco_df.to_dict("list")))
-        e_reco = MatchedHitInfo(df=e_reco_df,
-                                ak_array=ak.Array(e_reco_df.to_dict("list")))
+        # b_reco = MatchedHitInfo(df=b_reco_df,
+        #                         ak_array=ak.Array(b_reco_df.to_dict("list")))
+        # e_reco = MatchedHitInfo(df=e_reco_df,
+        #                         ak_array=ak.Array(e_reco_df.to_dict("list")))
 
-        if plot_verbose:
-            self._plot_matched_hits(b_reco, area="btof_reco")
-            self._plot_matched_hits(e_reco, area="etof_reco")
+        # if plot_verbose:
+        #     self._plot_matched_hits(b_reco, area="btof_reco")
+        #     self._plot_matched_hits(e_reco, area="etof_reco")
 
-        return b_reco, e_reco
-        # return b_stable, e_stable
+        # return b_reco, e_reco
+        # ------------------------------------------------------------
+        
+        return b_stable, e_stable
 
     def _build_hit_info(
         self,

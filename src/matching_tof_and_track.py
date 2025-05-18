@@ -59,7 +59,7 @@ class MatchingTOFAndTrack:
 
         angle_threshold_btof = 0.001  # rad
         # angle_threshold_btof = 0.001  # rad
-        angle_threshold_etof     = 0.01   # rad
+        angle_threshold_etof     = 0.05   # rad
 
         btof_matched = {                          
             'event_idx': [], 'track_idx': [], 'track_p': [], 'track_pt': [],

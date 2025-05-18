@@ -124,18 +124,23 @@ class TOFPIDPerformancePlotter:
         bin_centers: np.ndarray,
         sep_pi_k   : np.ndarray,
         sep_k_p    : np.ndarray,
+        sep_pi_k_err  : np.ndarray,
+        sep_k_p_err   : np.ndarray,
         area: str = "btof",
+        p_range_min: float = 0.0,
+        p_range_max: float = 1.5,
     ) -> None:
         """
         Draw two curves on the same canvas:
 
         * π-K  separation power
         * K-p  separation power
+        With error bars.
         """
 
         # ─── sanitize NaN / inf ─────────────────────────────────
-        mask_pi_k = np.isfinite(sep_pi_k)
-        mask_k_p  = np.isfinite(sep_k_p)
+        mask_pi_k = np.isfinite(sep_pi_k) & np.isfinite(sep_pi_k_err)
+        mask_k_p  = np.isfinite(sep_k_p)  & np.isfinite(sep_k_p_err)
 
         if (not mask_pi_k.any()) and (not mask_k_p.any()):
             print(f"[warn] plot_separation_power_vs_momentum: no valid points for {area}")
@@ -143,35 +148,36 @@ class TOFPIDPerformancePlotter:
 
         x_pi_k = np.ascontiguousarray(bin_centers[mask_pi_k].astype(np.float64))
         y_pi_k = np.ascontiguousarray(sep_pi_k   [mask_pi_k].astype(np.float64))
-        x_k_p  = np.ascontiguousarray(bin_centers[mask_k_p ].astype(np.float64))
-        y_k_p  = np.ascontiguousarray(sep_k_p    [mask_k_p ].astype(np.float64))
+        e_pi_k = np.ascontiguousarray(sep_pi_k_err[mask_pi_k].astype(np.float64))
 
-        # ─── TGraph objects ─────────────────────────────────────
-        g_pi_k = r.TGraph(len(x_pi_k), x_pi_k, y_pi_k)
-        g_k_p  = r.TGraph(len(x_k_p ), x_k_p , y_k_p )
+        x_k_p  = np.ascontiguousarray(bin_centers[mask_k_p].astype(np.float64))
+        y_k_p  = np.ascontiguousarray(sep_k_p    [mask_k_p ].astype(np.float64))
+        e_k_p  = np.ascontiguousarray(sep_k_p_err[mask_k_p ].astype(np.float64))
+
+        # ─── TGraphErrors objects ───────────────────────────────
+        g_pi_k = r.TGraphErrors(len(x_pi_k), x_pi_k, y_pi_k, np.zeros_like(x_pi_k), e_pi_k)
+        g_k_p  = r.TGraphErrors(len(x_k_p ), x_k_p , y_k_p , np.zeros_like(x_k_p ), e_k_p )
 
         for g in (g_pi_k, g_k_p):
             g.SetMarkerSize(1.2)
-            g.GetXaxis().SetLimits(0.0, 3.5)
-            g.GetYaxis().SetRangeUser(0.0, 1.0)
+            g.GetXaxis().SetLimits(p_range_min, p_range_max)
+            g.GetYaxis().SetRangeUser(1e-3, 1e2)
 
         g_pi_k.SetMarkerStyle(20)
         g_k_p.SetMarkerStyle(21)
         g_k_p.SetMarkerColor(r.kRed)
 
-        g_pi_k.SetTitle(f"Separation Power ({area}); pT [GeV]; Separation Power")
+        g_pi_k.SetTitle(f"Separation Power (with error) [{area}]; pT [GeV]; Separation Power")
 
         # ─── canvas & draw ──────────────────────────────────────
-        c1 = r.TCanvas(f"c_sep_pi_k_{area}", " ", 800, 600)
-        c1.SetLogy(True) 
-        g_pi_k.GetYaxis().SetRangeUser(1e-3, 1e2)
-        g_pi_k.GetXaxis().SetLimits(0.0, 3.5)
+        c1 = r.TCanvas(f"c_sep_power_pi_k_{area}", " ", 800, 600)
+        c1.SetLogy(True)
+        c1.SetGrid()
         g_pi_k.Draw("AP")
 
-        c2 = r.TCanvas(f"c_sep_k_p_{area}", " ", 800, 600)
+        c2 = r.TCanvas(f"c_sep_power_k_p_{area}", " ", 800, 600)
         c2.SetLogy(True)
-        g_k_p.GetYaxis().SetRangeUser(1e-3, 1e2)
-        g_k_p.GetXaxis().SetLimits(0.0, 3.5)
+        c2.SetGrid()
         g_k_p.Draw("AP")
 
         if self.rootfile:
@@ -206,8 +212,8 @@ class TOFPIDPerformancePlotter:
             g.GetYaxis().SetRangeUser(0.0, 1.05)
 
         g_pi.SetMarkerStyle(20)
-        g_k .SetMarkerStyle(21); g_k.SetMarkerColor(r.kRed)
-        g_p .SetMarkerStyle(22); g_p.SetMarkerColor(r.kBlue)
+        g_k .SetMarkerStyle(20); g_k.SetMarkerColor(r.kRed)
+        g_p .SetMarkerStyle(20); g_p.SetMarkerColor(r.kBlue)
 
         g_pi.SetTitle(f"Purity vs Momentum ({area});Momentum [GeV];Purity")
 

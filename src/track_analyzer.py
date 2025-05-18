@@ -290,6 +290,7 @@ class TrackAnalyzer:
                     endcap_mask = (
                         (r_arr >= 100) & (r_arr <= 600)
                         & ((seg.z <= 1840) | (seg.z >= 1880))
+                        & (seg.pathlength >= 1580)
                     )
 
                     for xi, yi, zi, ri, pli, pi, pti in zip(

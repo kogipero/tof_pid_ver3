@@ -198,9 +198,9 @@ class ToFPIDPerformanceManager:
         Return
         -------
         bin_centers : np.ndarray
-        sep_pi_k    : np.ndarray  (\u03c0-K separation power)
+        sep_pi_k    : np.ndarray  (pi-K separation power)
         sep_k_p     : np.ndarray  (K-p separation power)
-        err_pi_k    : np.ndarray  (error of \u03c0-K separation)
+        err_pi_k    : np.ndarray  (error of pi-K separation)
         err_k_p     : np.ndarray  (error of K-p separation)
         """
 
@@ -219,7 +219,7 @@ class ToFPIDPerformanceManager:
         def _fit_gauss(vals: np.ndarray, mu_guess: float, p_low: float, p_high: float) -> Tuple[float, float, float, float]:
             idx = next(self._id_counter)
             title = f"PID separation power ({p_low:.2f} < p < {p_high:.2f})"
-            h = r.TH1D(f"reco_mass_{idx}_{p_low:.2f}_{p_high:.2f}", title, 100, 0, 1000)
+            h = r.TH1D(f"reco_mass_{idx}_{p_low:.2f}_{p_high:.2f}", title, 120, 0, 1200)
             for v in vals:
                 h.Fill(float(v))
 
@@ -228,7 +228,7 @@ class ToFPIDPerformanceManager:
                 h.Delete()
                 return 0.0, 0.0, 0.0, 0.0
 
-            f = r.TF1(f"f_sep_{idx}", "[0]*exp(-0.5*((x-[1])/[2])**2)", 0, 1000)
+            f = r.TF1(f"f_sep_{idx}", "[0]*exp(-0.5*((x-[1])/[2])**2)", 0, 1200)
             f.SetParameters(h.GetMaximum()*1.2, mu_guess, 20)
             h.Fit(f, "Q0")
             f.Write()

@@ -40,7 +40,14 @@ class MatchingTOFAndTrackPlotter:
             (data['mc_vertex_y'], [-100, 100], 'Hit z [mm]', 'hit_z'),
             (data['mc_vertex_z'], [-100, 100], 'Hit z [mm]', 'hit_z'),
             (data['track_pathlength'], [0, 2000], 'track_pathlength [mm]', 'track_pathlength'),
-            (data['delta_angle']*1000, [0, 2.0], 'delta_angle [mrad]', 'delta_angle'),
+            (data['delta_angle']*1000, [0, 2.0], 'delta_angle [mrad]', 'delta_angle_mrad'),
+            (data['delta_angle'], [0, 2.0], 'delta_angle [rad]', 'delta_angle_rad'),
+        ]
+
+        plot_2d_configs = [
+            (data['track_pos_theta'], data['track_pathlength'], [0, 3.2], [0, 2000], 'Track theta [rad]', 'Track pathlength [mm]', 'track_theta_pathlength'),
+            (data['mc_vertex_z'], data['tof_time'], [-10, 10], [0, 10], 'vertex z [mm]', 'Hit time [ns]', 'hit_z_time'),
+            (data['mc_vertex_z'], data['track_pathlength'], [-10, 10], [0, 2000], 'vertex z [mm]', 'Track pathlength [mm]', 'hit_z_pathlength'),
         ]
         
         for data_array, hist_range, xlabel, outputname in plot_configs:
@@ -51,6 +58,21 @@ class MatchingTOFAndTrackPlotter:
                 title=f'Matched_{outputname}_{area}',
                 xlabel=xlabel,
                 ylabel='Entries',
+                outputname=f'{self.name}/{outputname}',
+                rootfile=self.rootfile
+            )
+
+        for x_data, y_data, x_range, y_range, xlabel, ylabel, outputname in plot_2d_configs:
+            myfunc.make_2Dhistogram_root(
+                arrayx=x_data,
+                arrayy=y_data,
+                nbinsx=100,
+                rangex=x_range,
+                nbinsy=100,
+                rangey=y_range,
+                title=f'Matched_{outputname}_{area}',
+                xlabel=xlabel,
+                ylabel=ylabel,
                 outputname=f'{self.name}/{outputname}',
                 rootfile=self.rootfile
             )

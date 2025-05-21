@@ -86,7 +86,7 @@ class MatchingMCAndTOF:
         # -------------------comment out for now-------------------
         # ── 3) Reconstructed-only hits or conversion reconstructed hits ──
         # b_reco_df, e_reco_df = self.smearring_TOFHit_time(
-        #     b_stable_df, e_stable_df, time_resolution=0.044,
+        #     b_stable_df, e_stable_df, time_resolution=0.035,
         #     plot_verbose=plot_verbose
         # )
         # # # if self.version == '1.24.2':
@@ -188,6 +188,9 @@ class MatchingMCAndTOF:
             (df["mc_momentum"], [0,20],       'p [GeV/c]',  'mc_p'),
             (df["mc_pdg"],      [-500,500],   'PDG code',   'mc_pdg'),
             (df["mc_charge"],   [-2,2],       'charge',     'mc_charge'),
+            (df["mc_vertex_x"],[-100,100], 'vertex_x [mm]', 'mc_vertex_x'),
+            (df["mc_vertex_y"],[-100,100], 'vertex_y [mm]', 'mc_vertex_y'),
+            (df["mc_vertex_z"],[-100,100], 'vertex_z [mm]', 'mc_vertex_z'),
         ]
         for data, hr, xl, nm in configs:
             myfunc.make_histogram_root(
@@ -268,7 +271,8 @@ class MatchingMCAndTOF:
             (btof_df.mc_generator_status == 1) &
             (btof_df.mc_charge           != 0) &
             (btof_df.mc_vertex_z         > -5) &
-            (btof_df.mc_vertex_z         <  5)
+            (btof_df.mc_vertex_z         <  5) &
+            (np.sqrt(btof_df.mc_vertex_x**2 + btof_df.mc_vertex_y**2) < 10)
         )
         b_stable = btof_df[b_mask].reset_index(drop=True)
         b_stable.to_csv(f'./out/{self.name}/stable_particle_btof_hit.csv', index=False)
@@ -278,7 +282,8 @@ class MatchingMCAndTOF:
             (etof_df.mc_generator_status == 1) &
             (etof_df.mc_charge           != 0) &
             (etof_df.mc_vertex_z         > -5) &
-            (etof_df.mc_vertex_z         <  5)
+            (etof_df.mc_vertex_z         <  5) &
+            (np.sqrt(etof_df.mc_vertex_x**2 + etof_df.mc_vertex_y**2) < 10)
         )
         e_stable = etof_df[e_mask].reset_index(drop=True)
         e_stable.to_csv(f'./out/{self.name}/stable_particle_etof_hit.csv', index=False)
@@ -295,7 +300,7 @@ class MatchingMCAndTOF:
         self,
         b_stable_df: pd.DataFrame,
         e_stable_df: pd.DataFrame,
-        time_resolution: float = 0.044,
+        time_resolution: float,
         plot_verbose: bool=False
     ) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """

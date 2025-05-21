@@ -127,5 +127,3 @@ class MCAnalyzer:
                 outputname=f'{self.name}/{outputname}',
                 rootfile=self.rootfile
             )
-        
-        print('End plotting MC information')

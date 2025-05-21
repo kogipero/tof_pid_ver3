@@ -57,7 +57,7 @@ class MatchingTOFAndTrack:
         judge the matching by the angle distance between the track and the hit
         """
 
-        angle_threshold_btof = 0.001  # rad
+        angle_threshold_btof = 0.0004  # rad
         # angle_threshold_btof = 0.001  # rad
         angle_threshold_etof     = 0.05   # rad
 

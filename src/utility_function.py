@@ -62,6 +62,9 @@ def angular_distance(phi1, theta1, phi2, theta2):
         np.cos(theta1) * np.cos(theta2) * np.cos(delta_phi)
     )
 
+def euclidean_distance_2d(x1, y1, x2, y2):
+    return np.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+
 def gaussian(x, A, mu, sigma):
     return A * np.exp( - (x - mu)**2 / (2 * sigma**2) )
 
